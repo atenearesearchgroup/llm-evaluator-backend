@@ -19,8 +19,7 @@ public class MistralProvider implements Platform {
     private MistralAiApi mistralAiApi;
 
     public MistralProvider() {
-        MistralAiProperties properties = MistralAIProviderService.getInstance().getOptions();
-        this.mistralAiApi = new MistralAiApi(properties.getApiKey());
+        this.mistralAiApi = MistralAIProviderService.getInstance().getApi();
     }
 
     @Override

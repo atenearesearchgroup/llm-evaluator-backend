@@ -18,9 +18,7 @@ public class ReplicateProvider implements Platform {
     private ReplicateApi replicateApi;
 
     public ReplicateProvider() {
-        ReplicateConnectionProperties properties = ReplicateProviderService.getInstance().getOptions();
-        System.out.println(properties.getToken());
-        this.replicateApi = new ReplicateApi(properties.getToken());
+        this.replicateApi = ReplicateProviderService.getInstance().getApi();
     }
 
     @Override

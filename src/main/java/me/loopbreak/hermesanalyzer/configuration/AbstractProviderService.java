@@ -1,15 +1,18 @@
 package me.loopbreak.hermesanalyzer.configuration;
 
-public class AbstractProviderService<T> {
+public abstract class AbstractProviderService<T, V> {
 
     private T options;
 
-    public AbstractProviderService(T options) {
+    protected AbstractProviderService(T options) {
         this.options = options;
     }
+
+    abstract public V getApi();
 
     public T getOptions() {
         return options;
     }
+
 
 }

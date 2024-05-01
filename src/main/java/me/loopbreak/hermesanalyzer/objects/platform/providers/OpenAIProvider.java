@@ -19,8 +19,7 @@ public class OpenAIProvider implements Platform {
     private OpenAiApi openAiApi;
 
     public OpenAIProvider() {
-        OpenAiProperties properties = OpenAIProviderService.getInstance().getOptions();
-        this.openAiApi = new OpenAiApi(properties.getApiKey());
+        this.openAiApi = OpenAIProviderService.getInstance().getApi();
     }
 
     @Override

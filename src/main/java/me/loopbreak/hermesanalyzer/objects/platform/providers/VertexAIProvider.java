@@ -18,13 +18,10 @@ import java.util.List;
 
 public class VertexAIProvider implements Platform {
 
-    private VertexAI vertexAI;
+    private final VertexAI vertexAI;
 
     public VertexAIProvider() {
-        VertexConnectionProperties properties = VertexAIProviderService.getInstance().getOptions();
-        Resource resource = properties.getCredentialsUri();
-//        Credentials credentials = GoogleCredentials.fromStream(resource.getInputStream());
-        this.vertexAI = new VertexAI(properties.getProjectId(), properties.getLocation());
+        this.vertexAI = VertexAIProviderService.getInstance().getApi();
     }
 
     @Override
