@@ -1,4 +1,4 @@
-package me.loopbreak.hermesanalyzer.configuration;
+package me.loopbreak.hermesanalyzer.services.configuration;
 
 import me.loopbreak.hermesanalyzer.objects.platform.connectors.openai.OpenAiProperties;
 import org.springframework.ai.openai.api.OpenAiApi;

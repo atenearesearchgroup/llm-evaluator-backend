@@ -1,6 +1,6 @@
 package me.loopbreak.hermesanalyzer.objects.platform.providers;
 
-import me.loopbreak.hermesanalyzer.configuration.HuggingFaceProviderService;
+import me.loopbreak.hermesanalyzer.services.configuration.HuggingFaceProviderService;
 import me.loopbreak.hermesanalyzer.objects.models.Model;
 import me.loopbreak.hermesanalyzer.objects.models.ModelImpl;
 import me.loopbreak.hermesanalyzer.objects.models.ModelSettings;

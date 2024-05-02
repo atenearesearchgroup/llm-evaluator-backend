@@ -10,11 +10,13 @@ public class ModelSettings implements ModelSettingsLike {
     private int maxTokens;
     private float temperature;
     private float topP;
-    private float repetitionPenalty;
+//    private float repetitionPenalty;
     private float frequencyPenalty;
     private float presencePenalty;
 
-    public ModelSettings(String modelName, String modelOwner, String version, String systemPrompt, int maxTokens, float temperature, float topP, float frequencyPenalty, float presencePenalty) {
+    public ModelSettings(String modelName, String modelOwner, String version, String systemPrompt,
+                         int maxTokens, float temperature, float topP,
+                         float frequencyPenalty, float presencePenalty) {
         this.modelName = modelName;
         this.modelOwner = modelOwner;
         this.version = version;
@@ -24,6 +26,10 @@ public class ModelSettings implements ModelSettingsLike {
         this.topP = topP;
         this.frequencyPenalty = frequencyPenalty;
         this.presencePenalty = presencePenalty;
+    }
+
+    public ModelSettings() {
+//        jpa only
     }
 
     public String getModelName() {

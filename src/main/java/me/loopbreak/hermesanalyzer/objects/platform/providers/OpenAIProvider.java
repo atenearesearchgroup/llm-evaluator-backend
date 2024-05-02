@@ -1,11 +1,10 @@
 package me.loopbreak.hermesanalyzer.objects.platform.providers;
 
-import me.loopbreak.hermesanalyzer.configuration.OpenAIProviderService;
+import me.loopbreak.hermesanalyzer.services.configuration.OpenAIProviderService;
 import me.loopbreak.hermesanalyzer.objects.models.Model;
 import me.loopbreak.hermesanalyzer.objects.models.ModelImpl;
 import me.loopbreak.hermesanalyzer.objects.models.ModelSettings;
 import me.loopbreak.hermesanalyzer.objects.platform.Platform;
-import me.loopbreak.hermesanalyzer.objects.platform.connectors.openai.OpenAiProperties;
 import org.springframework.ai.chat.ChatClient;
 import org.springframework.ai.openai.OpenAiChatClient;
 import org.springframework.ai.openai.OpenAiChatOptions;

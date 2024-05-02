@@ -1,4 +1,4 @@
-package me.loopbreak.hermesanalyzer.configuration;
+package me.loopbreak.hermesanalyzer.services.configuration;
 
 public abstract class AbstractProviderService<T, V> {
 

@@ -1,8 +1,6 @@
-package me.loopbreak.hermesanalyzer.configuration;
+package me.loopbreak.hermesanalyzer.services.configuration;
 
 import me.loopbreak.hermesanalyzer.objects.platform.connectors.ollama.OllamaConnectionProperties;
-import me.loopbreak.hermesanalyzer.objects.platform.connectors.replicate.ReplicateApi;
-import me.loopbreak.hermesanalyzer.objects.platform.connectors.replicate.ReplicateConnectionProperties;
 import org.springframework.ai.ollama.api.OllamaApi;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;

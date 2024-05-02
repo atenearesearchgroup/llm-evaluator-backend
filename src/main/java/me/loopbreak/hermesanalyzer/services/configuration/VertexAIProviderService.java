@@ -1,4 +1,4 @@
-package me.loopbreak.hermesanalyzer.configuration;
+package me.loopbreak.hermesanalyzer.services.configuration;
 
 import com.google.auth.Credentials;
 import com.google.auth.oauth2.GoogleCredentials;

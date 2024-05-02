@@ -1,4 +1,4 @@
-package me.loopbreak.hermesanalyzer.configuration;
+package me.loopbreak.hermesanalyzer.services.configuration;
 
 import me.loopbreak.hermesanalyzer.objects.platform.connectors.mistral.MistralAiProperties;
 import org.springframework.ai.mistralai.api.MistralAiApi;

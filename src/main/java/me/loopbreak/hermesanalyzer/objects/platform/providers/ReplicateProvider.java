@@ -1,13 +1,12 @@
 package me.loopbreak.hermesanalyzer.objects.platform.providers;
 
-import me.loopbreak.hermesanalyzer.configuration.ReplicateProviderService;
+import me.loopbreak.hermesanalyzer.services.configuration.ReplicateProviderService;
 import me.loopbreak.hermesanalyzer.objects.models.Model;
 import me.loopbreak.hermesanalyzer.objects.models.ModelImpl;
 import me.loopbreak.hermesanalyzer.objects.models.ModelSettings;
 import me.loopbreak.hermesanalyzer.objects.platform.Platform;
 import me.loopbreak.hermesanalyzer.objects.platform.connectors.replicate.ReplicateApi;
 import me.loopbreak.hermesanalyzer.objects.platform.connectors.replicate.ReplicateChatClient;
-import me.loopbreak.hermesanalyzer.objects.platform.connectors.replicate.ReplicateConnectionProperties;
 import me.loopbreak.hermesanalyzer.objects.platform.connectors.replicate.ReplicateOptions;
 import org.springframework.ai.chat.ChatClient;
 
