@@ -1,11 +1,11 @@
 package me.loopbreak.hermesanalyzer.objects.platform.connectors.replicate.response;
 
 public enum PredictionStatus {
-    STARTING(true),
-    PROCESSING(true),
-    SUCCEEDED,
-    FAILED,
-    CANCELED;
+    starting(true),
+    processing(true),
+    succeeded,
+    failed,
+    canceled;
 
     final boolean isRunning;
 

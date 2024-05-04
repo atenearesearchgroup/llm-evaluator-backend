@@ -3,10 +3,12 @@ package me.loopbreak.hermesanalyzer.objects.platform.connectors.replicate.respon
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public record GetPredictionResponse(String output, String error, PredictionStatus status) {
+import java.util.List;
 
-    public GetPredictionResponse(@JsonProperty("output") String output,
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public record GetPredictionResponse(List<String> output, String error, PredictionStatus status) {
+
+    public GetPredictionResponse(@JsonProperty("output") List<String> output,
                                  @JsonProperty("error") String error,
                                  @JsonProperty("status") PredictionStatus status) {
         this.output = output;
@@ -15,7 +17,7 @@ public record GetPredictionResponse(String output, String error, PredictionStatu
     }
 
     @JsonProperty("output")
-    public String output() {
+    public List<String> output() {
         return output;
     }
 

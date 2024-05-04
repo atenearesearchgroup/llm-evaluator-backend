@@ -20,6 +20,10 @@ public class ReplicateProvider implements Platform {
         this.replicateApi = ReplicateProviderService.getInstance().getApi();
     }
 
+    public ReplicateProvider(ReplicateApi replicateApi) {
+        this.replicateApi = replicateApi;
+    }
+
     @Override
     public Model getModel(ModelSettings modelSettings) {
         ReplicateOptions replicateOptions = new ReplicateOptions();

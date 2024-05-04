@@ -20,6 +20,7 @@ import org.springframework.web.client.RestClient;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.StringJoiner;
 import java.util.concurrent.*;
 import java.util.function.Consumer;
 
@@ -114,7 +115,7 @@ public class ReplicateApi {
         return resultFuture.join();
     }
 
-    private String pollPrediction(PredictionUrls urls) {
+    public String pollPrediction(PredictionUrls urls) {
         GetPredictionResponse response = this.restClient.get().uri(urls.get())
                 .retrieve()
                 .onStatus(this.responseErrorHandler)
@@ -127,11 +128,23 @@ public class ReplicateApi {
             throw new ModelConnectionException(response.error());
         }
 
-        if (response.status() != PredictionStatus.SUCCEEDED) {
+        if (response.status().isDone() && response.status() != PredictionStatus.succeeded)
             throw new ModelConnectionException(String.format("Model failed, there is some error (status: %s)", response.status()));
+
+        if(!response.status().isDone())
+            return null;
+
+        if(response.output() == null) {
+            throw new ModelConnectionException("Model output is null??");
         }
 
-        return response.output();
+        StringJoiner joiner = new StringJoiner("");
+
+        for (String output : response.output()) {
+            joiner.add(output);
+        }
+
+        return joiner.toString();
     }
 
     private static class ReplicateResponseErrorHandler implements ResponseErrorHandler {
