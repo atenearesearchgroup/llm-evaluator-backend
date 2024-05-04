@@ -1,5 +1,8 @@
 package me.loopbreak.hermesanalyzer.objects.models;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ModelSettings implements ModelSettingsLike {
     private String modelName;
     //    replicate needed modelOwner for official models
@@ -7,12 +10,12 @@ public class ModelSettings implements ModelSettingsLike {
     //    replicate version identifies the model itself
     private String version;
     private String systemPrompt;
-    private int maxTokens;
-    private float temperature;
-    private float topP;
+    private int maxTokens= -1;
+    private float temperature = -1;
+    private float topP = -1;
 //    private float repetitionPenalty;
-    private float frequencyPenalty;
-    private float presencePenalty;
+    private float frequencyPenalty = -1;
+    private float presencePenalty = -1;
 
     public ModelSettings(String modelName, String modelOwner, String version, String systemPrompt,
                          int maxTokens, float temperature, float topP,
