@@ -1,12 +1,15 @@
 package me.loopbreak.hermesanalyzer.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import me.loopbreak.hermesanalyzer.objects.models.ModelSettings;
 import me.loopbreak.hermesanalyzer.objects.models.ModelSettingsBuilder;
 import me.loopbreak.hermesanalyzer.objects.models.ModelSettingsLike;
 
 @Entity
+@Table(name = "model_settings")
 public class ModelSettingsEntity implements ModelSettingsLike {
 
     @Id
@@ -18,11 +21,16 @@ public class ModelSettingsEntity implements ModelSettingsLike {
     //    replicate version identifies the model itself
     private String version;
     private String systemPrompt;
+    @Column(columnDefinition = "integer default -1")
     private int maxTokens;
+    @Column(columnDefinition = "float default -1")
     private float temperature;
+    @Column(columnDefinition = "float default -1")
     private float topP;
 //    private float repetitionPenalty;
+@Column(columnDefinition = "float default -1")
     private float frequencyPenalty;
+    @Column(columnDefinition = "float default -1")
     private float presencePenalty;
 
     public ModelSettingsEntity() {
@@ -54,6 +62,10 @@ public class ModelSettingsEntity implements ModelSettingsLike {
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     @Override

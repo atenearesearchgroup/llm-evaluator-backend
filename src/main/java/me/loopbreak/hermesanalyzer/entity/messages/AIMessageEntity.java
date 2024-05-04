@@ -14,8 +14,8 @@ public class AIMessageEntity extends MessageEntity {
     public AIMessageEntity() {
     }
 
-    public AIMessageEntity(String content, Timestamp timestamp, int score) {
-        super(content, timestamp);
+    public AIMessageEntity(String content, Timestamp timestamp, int score, PromptIterationEntity promptIteration) {
+        super(content, timestamp, promptIteration);
         this.score = score;
     }
 

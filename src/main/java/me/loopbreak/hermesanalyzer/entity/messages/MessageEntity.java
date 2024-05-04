@@ -1,32 +1,41 @@
 package me.loopbreak.hermesanalyzer.entity.messages;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
+@Table(name = "message")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "message_type",
-discriminatorType = DiscriminatorType.STRING)
+        discriminatorType = DiscriminatorType.STRING)
 public class MessageEntity {
     @Id
     @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private Timestamp timestamp;
     private String content;
 
     @ManyToOne
+//    @JoinColumns({
+//            @JoinColumn(name = "prompt_iteration_id", referencedColumnName = "id"),
+//            @JoinColumn(name = "prompt_iteration_iteration", referencedColumnName = "iteration")
+//    })
+    @JsonIgnoreProperties("messages")
     @JoinColumn(name = "prompt_iteration_id")
     private PromptIterationEntity promptIteration;
 
     public MessageEntity() {
     }
 
-    public MessageEntity(String content, Timestamp timestamp) {
+    public MessageEntity(String content, Timestamp timestamp, PromptIterationEntity promptIteration) {
         this.content = content;
         this.timestamp = timestamp;
+        this.promptIteration = promptIteration;
     }
 
     public Timestamp getTimestamp() {
@@ -39,6 +48,10 @@ public class MessageEntity {
 
     public Long getId() {
         return id;
+    }
+
+    public PromptIterationEntity getPromptIteration() {
+        return promptIteration;
     }
 
     @Override

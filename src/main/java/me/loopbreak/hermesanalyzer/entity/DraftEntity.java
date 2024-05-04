@@ -1,9 +1,13 @@
 package me.loopbreak.hermesanalyzer.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import me.loopbreak.hermesanalyzer.entity.messages.PromptIterationEntity;
+
+import java.util.List;
 
 @Entity
-@Table(name = "draft_entity")
+@Table(name = "draft")
 public class DraftEntity {
 
     @Id
@@ -11,16 +15,21 @@ public class DraftEntity {
     private long id;
 
     @ManyToOne
+    @JsonIgnoreProperties("drafts")
     @JoinColumn(name = "instance_id")
-    private IntentInstanceEntity intentModel;
+    private IntentInstanceEntity intentInstance;
+
+    @JsonIgnoreProperties("draft")
+    @OneToMany(mappedBy = "draft")
+    private List<PromptIterationEntity> promptIterations;
 
     private int draftNumber;
 
     public DraftEntity() {
     }
 
-    public DraftEntity(IntentInstanceEntity intentModel, int draftNumber) {
-        this.intentModel = intentModel;
+    public DraftEntity(IntentInstanceEntity intentInstance, int draftNumber) {
+        this.intentInstance = intentInstance;
         this.draftNumber = draftNumber;
     }
 
@@ -28,8 +37,12 @@ public class DraftEntity {
         return id;
     }
 
-    public IntentInstanceEntity getIntentModel() {
-        return intentModel;
+    public IntentInstanceEntity getIntentInstance() {
+        return intentInstance;
+    }
+
+    public List<PromptIterationEntity> getPromptIterations() {
+        return promptIterations;
     }
 
     public int getDraftNumber() {
