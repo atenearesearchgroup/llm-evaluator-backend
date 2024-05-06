@@ -1,9 +1,7 @@
 package me.loopbreak.hermesanalyzer.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import me.loopbreak.hermesanalyzer.objects.models.ModelSettings;
 import me.loopbreak.hermesanalyzer.objects.models.ModelSettingsBuilder;
 import me.loopbreak.hermesanalyzer.objects.models.ModelSettingsLike;
@@ -14,6 +12,12 @@ public class ModelSettingsEntity implements ModelSettingsLike {
 
     @Id
     private Long id;
+
+    @JsonIgnore
+    @MapsId
+    @OneToOne
+    @JoinColumn(name = "id")
+    private IntentInstanceEntity instance;
 
     private String modelName;
     //    replicate needed modelOwner for official models
@@ -27,8 +31,8 @@ public class ModelSettingsEntity implements ModelSettingsLike {
     private float temperature;
     @Column(columnDefinition = "float default -1")
     private float topP;
-//    private float repetitionPenalty;
-@Column(columnDefinition = "float default -1")
+    //    private float repetitionPenalty;
+    @Column(columnDefinition = "float default -1")
     private float frequencyPenalty;
     @Column(columnDefinition = "float default -1")
     private float presencePenalty;
@@ -47,8 +51,8 @@ public class ModelSettingsEntity implements ModelSettingsLike {
     }
 
     public ModelSettingsEntity(String modelName, String modelOwner, String version, String systemPrompt,
-                                                   int maxTokens, float temperature, float topP,
-                                                   float frequencyPenalty, float presencePenalty) {
+                               int maxTokens, float temperature, float topP,
+                               float frequencyPenalty, float presencePenalty) {
         this.modelName = modelName;
         this.modelOwner = modelOwner;
         this.version = version;
@@ -64,8 +68,12 @@ public class ModelSettingsEntity implements ModelSettingsLike {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public IntentInstanceEntity getInstance() {
+        return instance;
+    }
+
+    public void setInstance(IntentInstanceEntity instance) {
+        this.instance = instance;
     }
 
     @Override

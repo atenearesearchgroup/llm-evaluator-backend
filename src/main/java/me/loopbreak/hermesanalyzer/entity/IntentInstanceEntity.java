@@ -1,5 +1,6 @@
 package me.loopbreak.hermesanalyzer.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -8,33 +9,29 @@ import java.util.List;
 @Table(name = "intent_instance")
 public class IntentInstanceEntity extends EvaluationSettings {
     @Id
-    @Column(name = "id", nullable = false)
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
     @JoinColumn(name = "intent_model_id")
     private IntentModelEntity intentModel;
 
-    @OneToMany(mappedBy = "intentInstance")
+    @JsonIgnoreProperties("intentInstance")
+    @OneToMany(mappedBy = "intentInstance", cascade = CascadeType.ALL)
     private List<DraftEntity> drafts;
 
     private String platform;
 
-    @OneToOne
-    @JoinColumn(name = "model_settings_id")
+    @OneToOne(mappedBy = "instance", cascade = CascadeType.ALL)
     private ModelSettingsEntity modelSettings;
 
     public IntentInstanceEntity() {
     }
 
-    public IntentInstanceEntity(String platform, IntentModelEntity intentModel, EvaluationSettings evaluationSettings, ModelSettingsEntity modelSettings) {
+    public IntentInstanceEntity(String platform, IntentModelEntity intentModel, EvaluationSettings evaluationSettings) {
         this.platform = platform;
         this.intentModel = intentModel;
-        this.modelSettings = modelSettings;
         this.copy(evaluationSettings);
-
-
     }
 
     public Long getId() {

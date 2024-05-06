@@ -20,7 +20,7 @@ public class DraftEntity {
     private IntentInstanceEntity intentInstance;
 
     @JsonIgnoreProperties("draft")
-    @OneToMany(mappedBy = "draft")
+    @OneToMany(mappedBy = "draft", cascade = CascadeType.ALL)
     private List<PromptIterationEntity> promptIterations;
 
     private int draftNumber;

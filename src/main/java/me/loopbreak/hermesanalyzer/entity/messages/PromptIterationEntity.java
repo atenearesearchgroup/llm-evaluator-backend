@@ -26,7 +26,7 @@ public class PromptIterationEntity {
     private DraftEntity draft;
 
     @JsonIgnoreProperties("promptIteration")
-    @OneToMany(mappedBy = "promptIteration")
+    @OneToMany(mappedBy = "promptIteration", cascade = CascadeType.ALL)
     private List<MessageEntity> messages;
 
     public PromptIterationEntity() {
@@ -52,6 +52,10 @@ public class PromptIterationEntity {
 
     public int getIteration() {
         return iteration;
+    }
+
+    public List<MessageEntity> getMessages() {
+        return messages;
     }
 
 
