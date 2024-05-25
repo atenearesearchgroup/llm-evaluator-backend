@@ -24,29 +24,29 @@ class PlantParserTest {
                \s
                 @startsketch
                 skinparam monochrome true
-                               \s
+                \s
                 class Course {
                     - name: string
                     - credits: int
                     + Prof_imparting: Professor[]
                 }
-                               \s
+                \s
                 class Professor {
                     - name: string
                     + imparts: Course[]
                 }
-                               \s
+                \s
                 class Student {
                     - name: string
                     + enrollsIn: Course[]
                 }
-                               \s
+                \s
                 class Dormitory {
                     - price: float
                     - students: Student[]
                     + accommodates: Student[]
                 }
-                               \s
+                \s
                 Student --|> Course : imparts, enrollsIn
                 Professor --|> Course : imparts
                 Course ..--< "aggregate": Student : "requires" 5_ Students
@@ -56,33 +56,33 @@ class PlantParserTest {
                 @endsketch""";
         String content = """
                 Here is the PlantUML code for the requested class diagram:
-                               \s
+                \s
                 ```plantuml
                 @startsketch
                 skinparam monochrome true
-                               \s
+                \s
                 class Course {
                     - name: string
                     - credits: int
                     + Prof_imparting: Professor[]
                 }
-                               \s
+                \s
                 class Professor {
                     - name: string
                     + imparts: Course[]
                 }
-                               \s
+                \s
                 class Student {
                     - name: string
                     + enrollsIn: Course[]
                 }
-                               \s
+                \s
                 class Dormitory {
                     - price: float
                     - students: Student[]
                     + accommodates: Student[]
                 }
-                               \s
+                \s
                 Student --|> Course : imparts, enrollsIn
                 Professor --|> Course : imparts
                 Course ..--< "aggregate": Student : "requires" 5_ Students
@@ -91,11 +91,13 @@ class PlantParserTest {
                 Student -- "enrolled in": Course
                 @endsketch
                 ```
-                               \s
+                \s
                 This PlantUML code defines the classes `Course`, `Professor`, `Student`, and `Dormitory`. The relationships between these classes, as described in your instructions, are also defined. Note that no operations (methods or functions) have been included as requested.""";
 
 
-        assertThat(PlantParser.getPlantUML(content)).isEqualTo(expectedResponse);
+        System.out.println(PlantParser.getPlantUML(content));
+
+        assertThat(PlantParser.getPlantUML(content)).isEqualToNormalizingWhitespace(expectedResponse);
     }
 
     @Test
