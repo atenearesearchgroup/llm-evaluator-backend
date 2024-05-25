@@ -64,9 +64,47 @@ public class ModelSettingsEntity implements ModelSettingsLike {
         this.presencePenalty = presencePenalty;
     }
 
+
     public Long getId() {
         return id;
     }
+
+    public String getModelName() {
+        return modelName;
+    }
+
+    public String getModelOwner() {
+        return modelOwner;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public String getSystemPrompt() {
+        return systemPrompt;
+    }
+
+    public int getMaxTokens() {
+        return maxTokens;
+    }
+
+    public float getTemperature() {
+        return temperature;
+    }
+
+    public float getTopP() {
+        return topP;
+    }
+
+    public float getFrequencyPenalty() {
+        return frequencyPenalty;
+    }
+
+    public float getPresencePenalty() {
+        return presencePenalty;
+    }
+
 
     public IntentInstanceEntity getInstance() {
         return instance;
@@ -91,5 +129,19 @@ public class ModelSettingsEntity implements ModelSettingsLike {
                 .presencePenalty(presencePenalty);
 
         return builder.asModelSettings();
+    }
+
+    public void copy(ModelSettingsLike modelSettingsLike) {
+        ModelSettings modelSettings = modelSettingsLike.asModelSettings();
+
+        modelName = modelSettings.getModelName();
+        modelOwner = modelSettings.getModelOwner();
+        version = modelSettings.getVersion();
+        systemPrompt = modelSettings.getSystemPrompt();
+        maxTokens = modelSettings.getMaxTokens();
+        temperature = modelSettings.getTemperature();
+        topP = modelSettings.getTopP();
+        frequencyPenalty = modelSettings.getFrequencyPenalty();
+        presencePenalty = modelSettings.getPresencePenalty();
     }
 }

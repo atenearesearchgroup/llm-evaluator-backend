@@ -11,7 +11,7 @@ import java.util.Objects;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "message_type",
         discriminatorType = DiscriminatorType.STRING)
-public class MessageEntity {
+public abstract class MessageEntity {
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,6 +54,8 @@ public class MessageEntity {
         return promptIteration;
     }
 
+    abstract String getType();
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -65,4 +67,6 @@ public class MessageEntity {
     public int hashCode() {
         return Objects.hashCode(getId());
     }
+
+    public abstract MessageEntity clone(PromptIterationEntity promptIterationEntity);
 }

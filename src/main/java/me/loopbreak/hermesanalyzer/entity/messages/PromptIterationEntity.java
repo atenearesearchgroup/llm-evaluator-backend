@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import me.loopbreak.hermesanalyzer.entity.DraftEntity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -36,6 +37,15 @@ public class PromptIterationEntity {
         this.type = type;
         this.draft = draft;
         this.iteration = iteration;
+        this.messages = new ArrayList<>();
+    }
+
+    private PromptIterationEntity(DraftEntity draftEntity, PromptIterationEntity promptIteration) {
+        this.type = promptIteration.getType();
+        this.draft = draftEntity;
+        this.iteration = promptIteration.getIteration();
+        this.messages = new ArrayList<>();
+        promptIteration.getMessages().forEach(message -> this.messages.add(message.clone(this)));
     }
 
     public Long getId() {
@@ -58,6 +68,9 @@ public class PromptIterationEntity {
         return messages;
     }
 
+    public PromptIterationEntity clone(DraftEntity draftEntity) {
+        return new PromptIterationEntity(draftEntity, this);
+    }
 
     public static class PromptIterationId implements Serializable {
         private long id;
