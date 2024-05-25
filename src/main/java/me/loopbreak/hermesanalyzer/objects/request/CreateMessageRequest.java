@@ -9,13 +9,17 @@ import me.loopbreak.hermesanalyzer.entity.messages.UserMessageEntity;
 import java.sql.Timestamp;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public record CreateMessageRequest(String promptType, String content, Integer score) {
+public record CreateMessageRequest(String promptType, String content, Integer score, Boolean manual) {
 
     public MessageEntity toMessageEntity(PromptIterationEntity promptIteration) {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         return score != null ?
-                new AIMessageEntity(content, timestamp, score, promptIteration) :
+                new AIMessageEntity(content, timestamp, score, manual != null ? manual : false, promptIteration) :
                 new UserMessageEntity(content, timestamp, promptIteration);
+    }
+
+    public String getMessageType() {
+        return score != null ? "AI" : "User";
     }
 
 }
