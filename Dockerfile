@@ -13,9 +13,12 @@ COPY --from=build ${DEPENDENCY}/BOOT-INF/lib /app/lib
 COPY --from=build ${DEPENDENCY}/META-INF /app/META-INF
 COPY --from=build ${DEPENDENCY}/BOOT-INF/classes /app
 COPY --from=build /workspace/app/docker-env.sh /app
-ENV REPLICATE_TOKEN=PLACEHOLDER_TOKEN
-ENV DATASOURCE_URL="jdbc:mysql://hermesanalyzer-backend-mysql-1:3306/mydatabase"
-ENV DATASOURCE_USERNAME=root
-ENV DATASOURCE_PASSWORD=verysecret
-RUN #sh app/docker-env.sh
+#ARG REPLICATE_TOKEN
+#ENV REPLICATE_TOKEN=$REPLICATE_TOKEN
+#ENV REPLICATE_TOKEN=r8_LFfOsUnQt6QefErRCBnXr4KTVTAnDIW0yU1Tn
+#ENV DATASOURCE_URL="jdbc:mysql://hermesanalyzer-backend-mysql-1:3306/mydatabase"
+#ENV DATASOURCE_USERNAME=root
+#ENV DATASOURCE_PASSWORD=verysecret
+#RUN sh app/docker-env.sh
+EXPOSE 8080
 ENTRYPOINT ["java","-cp","app:app/lib/*","me/loopbreak/hermesanalyzer/HermesApplication"]
