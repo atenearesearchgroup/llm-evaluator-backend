@@ -182,8 +182,7 @@ create table if not exists mydatabase.message
 (
     255
 ) null,
-    timestamp datetime
-(
+    timestamp timestamp(
     6
 ) null,
     score int null,
