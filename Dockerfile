@@ -12,7 +12,7 @@ ARG DEPENDENCY=/workspace/app/build/dependency
 COPY --from=build ${DEPENDENCY}/BOOT-INF/lib /app/lib
 COPY --from=build ${DEPENDENCY}/META-INF /app/META-INF
 COPY --from=build ${DEPENDENCY}/BOOT-INF/classes /app
-COPY --from=build /workspace/app/docker-env.sh /app
+#COPY --from=build /workspace/app/docker-env.sh /app
 #ARG REPLICATE_TOKEN
 #ENV REPLICATE_TOKEN=$REPLICATE_TOKEN
 #ENV REPLICATE_TOKEN=r8_LFfOsUnQt6QefErRCBnXr4KTVTAnDIW0yU1Tn
