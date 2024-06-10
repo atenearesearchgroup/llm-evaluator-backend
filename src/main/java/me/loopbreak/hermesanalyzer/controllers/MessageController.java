@@ -3,23 +3,23 @@ package me.loopbreak.hermesanalyzer.controllers;
 import me.loopbreak.hermesanalyzer.entity.messages.AIMessageEntity;
 import me.loopbreak.hermesanalyzer.objects.request.ScoreMessageRequest;
 import me.loopbreak.hermesanalyzer.repository.message.AiMessageRepository;
-import me.loopbreak.hermesanalyzer.services.DraftService;
+import me.loopbreak.hermesanalyzer.services.ChatService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-@RestController("/message")
+@RestController
 @CrossOrigin(origins = {"http://localhost:8080", "http://localhost:4321"})
-@RequestMapping(value = "/platform", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/message", produces = MediaType.APPLICATION_JSON_VALUE)
 public class MessageController {
 
 
-    private final DraftService draftService;
+    private final ChatService chatService;
     private final AiMessageRepository aiMessageRepository;
 
-    public MessageController(DraftService draftService, AiMessageRepository aiMessageRepository) {
-        this.draftService = draftService;
+    public MessageController(ChatService chatService, AiMessageRepository aiMessageRepository) {
+        this.chatService = chatService;
         this.aiMessageRepository = aiMessageRepository;
     }
 

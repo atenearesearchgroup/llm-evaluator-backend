@@ -1,6 +1,6 @@
 package me.loopbreak.hermesanalyzer.controllers;
 
-import me.loopbreak.hermesanalyzer.entity.DraftEntity;
+import me.loopbreak.hermesanalyzer.entity.ChatEntity;
 import me.loopbreak.hermesanalyzer.entity.IntentInstanceEntity;
 import me.loopbreak.hermesanalyzer.objects.request.CloneInstanceRequest;
 import me.loopbreak.hermesanalyzer.objects.request.UpdateInstanceRequest;
@@ -9,7 +9,6 @@ import me.loopbreak.hermesanalyzer.services.InstanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -44,9 +43,9 @@ public class InstanceController {
     }
 
     @DeleteMapping("/{instance}")
-    public ResponseEntity<?> deleteInstance(@PathVariable Long instance) {
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteInstance(@PathVariable Long instance) {
         instanceService.deleteInstance(instance);
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/{instance}/clone")
@@ -54,16 +53,16 @@ public class InstanceController {
         return instanceService.cloneInstance(instance, request);
     }
 
-    @PostMapping("/{instance}/drafts")
-    public Object createDrafts(@PathVariable Long instance) {
+    @PostMapping("/{instance}/chats")
+    public Object createChat(@PathVariable Long instance) {
         IntentInstanceEntity instanceEntity = instanceService.getInstance(instance);
 
-        return instanceService.createDraft(instanceEntity);
+        return instanceService.createChat(instanceEntity);
     }
 
-    @GetMapping("/{instance}/drafts")
-    public List<DraftEntity> getDrafts(@PathVariable Long instance) {
-        return instanceService.getInstance(instance).getDrafts();
+    @GetMapping("/{instance}/chats")
+    public List<ChatEntity> getChats(@PathVariable Long instance) {
+        return instanceService.getInstance(instance).getChats();
     }
 
 }

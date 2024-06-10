@@ -1,9 +1,9 @@
 package me.loopbreak.hermesanalyzer.services;
 
-import me.loopbreak.hermesanalyzer.entity.DraftEntity;
+import me.loopbreak.hermesanalyzer.entity.ChatEntity;
 import me.loopbreak.hermesanalyzer.entity.IntentInstanceEntity;
 import me.loopbreak.hermesanalyzer.objects.request.CloneInstanceRequest;
-import me.loopbreak.hermesanalyzer.repository.DraftEntityRepository;
+import me.loopbreak.hermesanalyzer.repository.ChatEntityRepository;
 import me.loopbreak.hermesanalyzer.repository.IntentInstanceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,12 +15,12 @@ import org.springframework.web.server.ResponseStatusException;
 public class InstanceService {
 
     private final IntentInstanceRepository intentInstanceRepository;
-    private final DraftEntityRepository draftEntityRepository;
+    private final ChatEntityRepository chatEntityRepository;
 
     @Autowired
-    public InstanceService(IntentInstanceRepository intentInstanceRepository, DraftEntityRepository draftEntityRepository) {
+    public InstanceService(IntentInstanceRepository intentInstanceRepository, ChatEntityRepository chatEntityRepository) {
         this.intentInstanceRepository = intentInstanceRepository;
-        this.draftEntityRepository = draftEntityRepository;
+        this.chatEntityRepository = chatEntityRepository;
     }
 
     public IntentInstanceEntity getInstance(Long instance) {
@@ -64,24 +64,24 @@ public class InstanceService {
      * @return
      */
     @Transactional
-    public DraftEntity createDraft(IntentInstanceEntity instanceEntity) {
-        int iterations = instanceEntity.getDrafts().size();
+    public ChatEntity createChat(IntentInstanceEntity instanceEntity) {
+        int iterations = instanceEntity.getChats().size();
 
-        if (instanceEntity.getDrafts().stream().anyMatch(draft -> !draft.isFinalized())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is a draft still not finalized");
+        if (instanceEntity.getChats().stream().anyMatch(chat -> !chat.isFinalized())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is a chat still not finalized");
         }
 
-        if (instanceEntity.getMaxDrafts() <= iterations) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Max drafts reached");
+        if (instanceEntity.getMaxChats() <= iterations) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Max chats reached");
         }
 
-        DraftEntity draft = new DraftEntity(instanceEntity, iterations);
+        ChatEntity chat = new ChatEntity(instanceEntity, iterations);
 
-        draftEntityRepository.save(draft);
+        chatEntityRepository.save(chat);
 
-        instanceEntity.getDrafts().add(draft);
+        instanceEntity.getChats().add(chat);
 
-        return draft;
+        return chat;
     }
 
 

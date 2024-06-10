@@ -2,7 +2,7 @@ package me.loopbreak.hermesanalyzer.entity.messages;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import me.loopbreak.hermesanalyzer.entity.DraftEntity;
+import me.loopbreak.hermesanalyzer.entity.ChatEntity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ public class PromptIterationEntity {
 
     @JsonIgnoreProperties("promptIterations")
     @ManyToOne
-    private DraftEntity draft;
+    private ChatEntity chat;
 
     @JsonIgnoreProperties("promptIteration")
     @OneToMany(mappedBy = "promptIteration", cascade = CascadeType.ALL)
@@ -33,16 +33,16 @@ public class PromptIterationEntity {
     public PromptIterationEntity() {
     }
 
-    public PromptIterationEntity(String type, DraftEntity draft, int iteration) {
+    public PromptIterationEntity(String type, ChatEntity chat, int iteration) {
         this.type = type;
-        this.draft = draft;
+        this.chat = chat;
         this.iteration = iteration;
         this.messages = new ArrayList<>();
     }
 
-    private PromptIterationEntity(DraftEntity draftEntity, PromptIterationEntity promptIteration) {
+    private PromptIterationEntity(ChatEntity chatEntity, PromptIterationEntity promptIteration) {
         this.type = promptIteration.getType();
-        this.draft = draftEntity;
+        this.chat = chatEntity;
         this.iteration = promptIteration.getIteration();
         this.messages = new ArrayList<>();
         promptIteration.getMessages().forEach(message -> this.messages.add(message.clone(this)));
@@ -56,8 +56,8 @@ public class PromptIterationEntity {
         return type;
     }
 
-    public DraftEntity getDraft() {
-        return draft;
+    public ChatEntity getChat() {
+        return chat;
     }
 
     public int getIteration() {
@@ -68,8 +68,8 @@ public class PromptIterationEntity {
         return messages;
     }
 
-    public PromptIterationEntity clone(DraftEntity draftEntity) {
-        return new PromptIterationEntity(draftEntity, this);
+    public PromptIterationEntity clone(ChatEntity chatEntity) {
+        return new PromptIterationEntity(chatEntity, this);
     }
 
     public static class PromptIterationId implements Serializable {

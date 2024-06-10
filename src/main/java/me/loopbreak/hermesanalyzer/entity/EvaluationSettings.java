@@ -6,33 +6,33 @@ import org.jetbrains.annotations.NotNull;
 @MappedSuperclass
 public class EvaluationSettings {
 
-    private Integer maxK;
-    private Integer maxDrafts;
+    private Integer maxErrors;
+    private Integer maxChats;
     private Integer maxRepeatingPrompt;
 
     public EvaluationSettings() {
     }
 
-    public EvaluationSettings(int maxK, int maxDrafts, int maxRepeatingPrompt) {
-        this.maxK = maxK;
-        this.maxDrafts = maxDrafts;
+    public EvaluationSettings(int maxErrors, int maxChats, int maxRepeatingPrompt) {
+        this.maxErrors = maxErrors;
+        this.maxChats = maxChats;
         this.maxRepeatingPrompt = maxRepeatingPrompt;
     }
 
-    public int getMaxK() {
-        return maxK;
+    public int getMaxErrors() {
+        return maxErrors;
     }
 
-    public void setMaxK(int maxK) {
-        this.maxK = maxK;
+    public void setMaxErrors(int maxErrors) {
+        this.maxErrors = maxErrors;
     }
 
-    public int getMaxDrafts() {
-        return maxDrafts;
+    public int getMaxChats() {
+        return maxChats;
     }
 
-    public void setMaxDrafts(int maxDrafts) {
-        this.maxDrafts = maxDrafts;
+    public void setMaxChats(int maxChats) {
+        this.maxChats = maxChats;
     }
 
     public int getMaxRepeatingPrompt() {
@@ -49,8 +49,8 @@ public class EvaluationSettings {
      * @param origin
      */
     public void copy(@NotNull EvaluationSettings origin) {
-        this.maxK = origin.maxK;
-        this.maxDrafts = origin.maxDrafts;
+        this.maxErrors = origin.maxErrors;
+        this.maxChats = origin.maxChats;
         this.maxRepeatingPrompt = origin.maxRepeatingPrompt;
     }
 

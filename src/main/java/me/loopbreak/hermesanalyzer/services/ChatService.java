@@ -1,6 +1,6 @@
 package me.loopbreak.hermesanalyzer.services;
 
-import me.loopbreak.hermesanalyzer.entity.DraftEntity;
+import me.loopbreak.hermesanalyzer.entity.ChatEntity;
 import me.loopbreak.hermesanalyzer.entity.IntentInstanceEntity;
 import me.loopbreak.hermesanalyzer.entity.ModelSettingsEntity;
 import me.loopbreak.hermesanalyzer.entity.messages.AIMessageEntity;
@@ -12,7 +12,7 @@ import me.loopbreak.hermesanalyzer.objects.models.Model;
 import me.loopbreak.hermesanalyzer.objects.platform.Platform;
 import me.loopbreak.hermesanalyzer.objects.platform.PlatformProvider;
 import me.loopbreak.hermesanalyzer.objects.request.CreateMessageRequest;
-import me.loopbreak.hermesanalyzer.repository.DraftEntityRepository;
+import me.loopbreak.hermesanalyzer.repository.ChatEntityRepository;
 import me.loopbreak.hermesanalyzer.repository.PromptIterationEntityRepository;
 import me.loopbreak.hermesanalyzer.repository.message.AiMessageRepository;
 import me.loopbreak.hermesanalyzer.repository.message.UserMessageRepository;
@@ -25,57 +25,57 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.Comparator;
 
 @Service
-public class DraftService {
+public class ChatService {
 
 
-    private final DraftEntityRepository draftEntityRepository;
+    private final ChatEntityRepository chatEntityRepository;
     private final PromptIterationEntityRepository promptIterationEntityRepository;
     private final AiMessageRepository aiMessageRepository;
     private final UserMessageRepository userMessageRepository;
 
-    public DraftService(DraftEntityRepository draftEntityRepository,
-                        PromptIterationEntityRepository promptIterationEntityRepository, AiMessageRepository aiMessageRepository, UserMessageRepository userMessageRepository) {
-        this.draftEntityRepository = draftEntityRepository;
+    public ChatService(ChatEntityRepository chatEntityRepository,
+                       PromptIterationEntityRepository promptIterationEntityRepository, AiMessageRepository aiMessageRepository, UserMessageRepository userMessageRepository) {
+        this.chatEntityRepository = chatEntityRepository;
         this.promptIterationEntityRepository = promptIterationEntityRepository;
         this.aiMessageRepository = aiMessageRepository;
         this.userMessageRepository = userMessageRepository;
     }
 
-    public DraftEntity getDraft(Long draft) {
-        DraftEntity draftEntity = draftEntityRepository.findById(draft).orElse(null);
+    public ChatEntity getChat(Long chat) {
+        ChatEntity chatEntity = chatEntityRepository.findById(chat).orElse(null);
 
-        if (draftEntity == null)
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Draft not found");
+        if (chatEntity == null)
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Chat not found");
 
-        return draftEntity;
+        return chatEntity;
     }
 
-    public void setFinalized(DraftEntity draft, boolean finalized) {
-        draft.setFinalized(finalized);
-        draftEntityRepository.save(draft);
+    public void setFinalized(ChatEntity chat, boolean finalized) {
+        chat.setFinalized(finalized);
+        chatEntityRepository.save(chat);
     }
 
     @Transactional
-    public <T extends MessageEntity> @NotNull T createMessage(CreateMessageRequest request, DraftEntity draftEntity) {
+    public <T extends MessageEntity> @NotNull T createMessage(CreateMessageRequest request, ChatEntity chatEntity) {
 
-        if (draftEntity.isFinalized())
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Draft is finalized");
+        if (chatEntity.isFinalized())
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Chat is finalized");
 
-        PromptIterationEntity promptIteration = draftEntity.getLastIteration();
+        PromptIterationEntity promptIteration = chatEntity.getLastIteration();
 
         if (promptIteration == null || !promptIteration.getType().equals(request.promptType())) {
-            long promptCount = draftEntity.getPromptIterations().stream().
+            long promptCount = chatEntity.getPromptIterations().stream().
                     filter(p -> p.getType().equals(request.promptType()))
                     .count();
-            if (promptCount >= draftEntity.getIntentInstance().getMaxRepeatingPrompt())
+            if (promptCount >= chatEntity.getIntentInstance().getMaxRepeatingPrompt())
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                         "Prompt iteration limit reached (" + promptCount + "/"
-                        + draftEntity.getIntentInstance().getMaxRepeatingPrompt() + ")");
+                        + chatEntity.getIntentInstance().getMaxRepeatingPrompt() + ")");
 
-            promptIteration = new PromptIterationEntity(request.promptType(), draftEntity, draftEntity.getPromptIterations().size());
+            promptIteration = new PromptIterationEntity(request.promptType(), chatEntity, chatEntity.getPromptIterations().size());
             promptIteration = promptIterationEntityRepository.save(promptIteration);
 
-            draftEntity.getPromptIterations().add(promptIteration);
+            chatEntity.getPromptIterations().add(promptIteration);
         } else {
             long messagesCount = promptIteration.getMessages().stream()
                     .filter(UserMessageEntity.class::isInstance)
@@ -100,10 +100,10 @@ public class DraftService {
             }
 
             if (!request.getMessageType().equalsIgnoreCase("ai") &&
-                messagesCount >= draftEntity.getIntentInstance().getMaxK())
+                messagesCount >= chatEntity.getIntentInstance().getMaxErrors())
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                         "Messages per prompt limit reached (" + messagesCount + "/"
-                        + draftEntity.getIntentInstance().getMaxK() + ")");
+                        + chatEntity.getIntentInstance().getMaxErrors() + ")");
 
         }
 
@@ -120,8 +120,8 @@ public class DraftService {
         return messageEntity;
     }
 
-    public AIMessageEntity generateMessage(DraftEntity draftEntity) {
-        IntentInstanceEntity intentInstance = draftEntity.getIntentInstance();
+    public AIMessageEntity generateMessage(ChatEntity chatEntity) {
+        IntentInstanceEntity intentInstance = chatEntity.getIntentInstance();
         ModelSettingsEntity modelSettings = intentInstance.getModelSettings();
         Platform platform = PlatformProvider.getProvider(intentInstance.getPlatform());
 
@@ -133,7 +133,7 @@ public class DraftService {
         if (model == null)
             throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "Model not found");
 
-        PromptIterationEntity promptIteration = draftEntity.getLastIteration();
+        PromptIterationEntity promptIteration = chatEntity.getLastIteration();
 
         if (promptIteration == null)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No prompt iteration found");
@@ -146,12 +146,12 @@ public class DraftService {
         if (lastMessage == null || lastMessage instanceof AIMessageEntity)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No user message found");
 
-        AIMessage message = model.send(draftEntity.toDraft()).join();
+        AIMessage message = model.send(chatEntity.toDraft()).join();
 
 //        TODO: Add evaluation of the message
 
         AIMessageEntity aiMessage = createMessage(new CreateMessageRequest(promptIteration.getType(),
-                message.getContent(), 0, false), draftEntity);
+                message.getContent(), 0, false), chatEntity);
 
         if (aiMessage == null)
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to create AI message");

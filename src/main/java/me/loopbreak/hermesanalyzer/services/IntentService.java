@@ -51,7 +51,6 @@ public class IntentService {
 
         if (model == null)
             return Collections.emptyList();
-
         return intentInstanceRepository.findByIntentModel(model);
     }
 

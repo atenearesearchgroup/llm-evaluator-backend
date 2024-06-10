@@ -12,30 +12,30 @@ import java.util.Comparator;
 import java.util.List;
 
 @Entity
-@Table(name = "draft")
-public class DraftEntity {
+@Table(name = "chat")
+public class ChatEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @ManyToOne
-    @JsonIgnoreProperties("drafts")
+    @JsonIgnoreProperties("chats")
     @JoinColumn(name = "instance_id")
     private IntentInstanceEntity intentInstance;
 
-    @JsonIgnoreProperties("draft")
-    @OneToMany(mappedBy = "draft", cascade = CascadeType.ALL)
+    @JsonIgnoreProperties("chat")
+    @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL)
     private List<PromptIterationEntity> promptIterations;
 
     private int draftNumber;
     private boolean finalized;
     private String actualNode;
 
-    public DraftEntity() {
+    public ChatEntity() {
     }
 
-    public DraftEntity(IntentInstanceEntity intentInstance, int draftNumber) {
+    public ChatEntity(IntentInstanceEntity intentInstance, int draftNumber) {
         this.intentInstance = intentInstance;
         this.draftNumber = draftNumber;
         this.promptIterations = new ArrayList<>();
@@ -43,14 +43,14 @@ public class DraftEntity {
         this.actualNode = null;
     }
 
-    private DraftEntity(IntentInstanceEntity instanceEntity, DraftEntity draft) {
+    private ChatEntity(IntentInstanceEntity instanceEntity, ChatEntity chat) {
         this.intentInstance = instanceEntity;
-        this.draftNumber = draft.getDraftNumber();
+        this.draftNumber = chat.getDraftNumber();
         this.promptIterations = new ArrayList<>();
-        this.finalized = draft.isFinalized();
-        this.actualNode = draft.getActualNode();
+        this.finalized = chat.isFinalized();
+        this.actualNode = chat.getActualNode();
         this.promptIterations = new ArrayList<>();
-        draft.getPromptIterations().forEach(promptIteration -> this.promptIterations.add(promptIteration.clone(this)));
+        chat.getPromptIterations().forEach(promptIteration -> this.promptIterations.add(promptIteration.clone(this)));
     }
 
 
@@ -103,7 +103,7 @@ public class DraftEntity {
                 .orElse(null);
     }
 
-    public DraftEntity clone(IntentInstanceEntity intentInstanceEntity) {
-        return new DraftEntity(intentInstanceEntity, this);
+    public ChatEntity clone(IntentInstanceEntity intentInstanceEntity) {
+        return new ChatEntity(intentInstanceEntity, this);
     }
 }

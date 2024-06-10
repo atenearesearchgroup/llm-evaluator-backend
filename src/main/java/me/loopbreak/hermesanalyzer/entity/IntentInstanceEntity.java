@@ -21,7 +21,7 @@ public class IntentInstanceEntity extends EvaluationSettings {
 
     @JsonIgnoreProperties("intentInstance")
     @OneToMany(mappedBy = "intentInstance", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DraftEntity> drafts;
+    private List<ChatEntity> chats;
 
     private String platform;
 
@@ -37,7 +37,7 @@ public class IntentInstanceEntity extends EvaluationSettings {
         this.displayName = displayName;
         this.intentModel = intentModel;
         this.copy(evaluationSettings);
-        this.drafts = new ArrayList<>();
+        this.chats = new ArrayList<>();
     }
 
     public IntentInstanceEntity(IntentInstanceEntity instanceEntity) {
@@ -47,8 +47,8 @@ public class IntentInstanceEntity extends EvaluationSettings {
         this.modelSettings = new ModelSettingsEntity();
         this.modelSettings.setInstance(this);
         this.copy(instanceEntity);
-        this.drafts = new ArrayList<>();
-        instanceEntity.getDrafts().forEach(draft -> this.drafts.add(draft.clone(this)));
+        this.chats = new ArrayList<>();
+        instanceEntity.getChats().forEach(chat -> this.chats.add(chat.clone(this)));
     }
 
     public Long getId() {
@@ -79,8 +79,8 @@ public class IntentInstanceEntity extends EvaluationSettings {
         return intentModel;
     }
 
-    public List<DraftEntity> getDrafts() {
-        return drafts;
+    public List<ChatEntity> getChats() {
+        return chats;
     }
 
     public IntentInstanceEntity clone() {

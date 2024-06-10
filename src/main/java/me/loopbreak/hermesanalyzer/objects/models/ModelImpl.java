@@ -40,7 +40,7 @@ public class ModelImpl implements Model {
         if (!Objects.equals(draft.getSystemPrompt(), getModelSettings().getSystemPrompt())) {
             if (draft.getSystemPrompt() != null)
                 throw new ModelSettingsException(getModelSettings(),
-                        String.format("Draft system prompt (%s) does not match model system prompt",
+                        String.format("Chat system prompt (%s) does not match model system prompt",
                                 draft.getSystemPrompt()));
 
             draft.setSystemPrompt(getModelSettings().getSystemPrompt());
