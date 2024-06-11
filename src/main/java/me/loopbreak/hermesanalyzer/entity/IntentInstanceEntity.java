@@ -49,6 +49,9 @@ public class IntentInstanceEntity extends EvaluationSettings {
         this.copy(instanceEntity);
         this.chats = new ArrayList<>();
         instanceEntity.getChats().forEach(chat -> this.chats.add(chat.clone(this)));
+        if (!this.chats.isEmpty()) {
+            this.chats.get(this.chats.size() - 1).setFinalized(false);
+        }
     }
 
     public Long getId() {

@@ -13,6 +13,7 @@ public record CreateMessageRequest(String promptType, String content, Integer sc
 
     public MessageEntity toMessageEntity(PromptIterationEntity promptIteration) {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
         return score != null ?
                 new AIMessageEntity(content, timestamp, score, manual != null ? manual : false, promptIteration) :
                 new UserMessageEntity(content, timestamp, promptIteration);

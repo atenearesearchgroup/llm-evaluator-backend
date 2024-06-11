@@ -77,9 +77,9 @@ public class ChatService {
 
             chatEntity.getPromptIterations().add(promptIteration);
         } else {
-            long messagesCount = promptIteration.getMessages().stream()
-                    .filter(UserMessageEntity.class::isInstance)
-                    .count();
+//            long messagesCount = promptIteration.getMessages().stream()
+//                    .filter(UserMessageEntity.class::isInstance)
+//                    .count();
 
 //            take the last message
             MessageEntity lastMessage = promptIteration.getMessages().stream()
@@ -99,11 +99,11 @@ public class ChatService {
                 }
             }
 
-            if (!request.getMessageType().equalsIgnoreCase("ai") &&
-                messagesCount >= chatEntity.getIntentInstance().getMaxErrors())
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                        "Messages per prompt limit reached (" + messagesCount + "/"
-                        + chatEntity.getIntentInstance().getMaxErrors() + ")");
+//            if (!request.getMessageType().equalsIgnoreCase("ai") &&
+//                messagesCount >= chatEntity.getIntentInstance().getMaxErrors())
+//                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+//                        "Messages per prompt limit reached (" + messagesCount + "/"
+//                        + chatEntity.getIntentInstance().getMaxErrors() + ")");
 
         }
 
@@ -117,9 +117,31 @@ public class ChatService {
 
         promptIteration.getMessages().add(messageEntity);
 
+        if (request.getMessageType().equalsIgnoreCase("ai") &&
+            request.score() == -1 &&
+            promptIteration.getMessages().stream()
+                    .filter(AIMessageEntity.class::isInstance)
+                    .filter(m -> ((AIMessageEntity) m).getScore() == -1)
+                    .count() > chatEntity.getIntentInstance().getMaxErrors()) {
+            setFinalized(chatEntity, true);
+        }
+
+        if (promptIteration.getMessages().stream()
+                    .filter(AIMessageEntity.class::isInstance)
+                    .filter(m -> ((AIMessageEntity) m).getScore() != -1)
+                    .count() > 1) {
+            setFinalized(chatEntity, true);
+        }
+
         return messageEntity;
     }
 
+    /**
+     * TODO: Add evaluation of the message, need the evaluator bridge in order to work
+     *
+     * @param chatEntity
+     * @return
+     */
     public AIMessageEntity generateMessage(ChatEntity chatEntity) {
         IntentInstanceEntity intentInstance = chatEntity.getIntentInstance();
         ModelSettingsEntity modelSettings = intentInstance.getModelSettings();
