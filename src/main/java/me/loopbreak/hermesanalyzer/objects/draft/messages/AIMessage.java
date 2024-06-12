@@ -20,9 +20,6 @@ public class AIMessage extends Message {
     }
 
     /**
-     * TODO: Check if it would be better to be auto-evaluated by the own model and return with the score already
-     *  or if it would be better to just receive the call and evaluate the output with the result.
-     *
      * @param score The score to be set 0-100
      */
     public void setScore(int score) {
