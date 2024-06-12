@@ -9,7 +9,7 @@ import me.loopbreak.hermesanalyzer.entity.messages.UserMessageEntity;
 import java.sql.Timestamp;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public record CreateMessageRequest(String promptType, String content, Integer score, Boolean manual) {
+public record CreateMessageRequest(String promptType, String content, Double score, Boolean manual) {
 
     public MessageEntity toMessageEntity(PromptIterationEntity promptIteration) {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());

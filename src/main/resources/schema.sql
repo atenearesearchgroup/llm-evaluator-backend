@@ -67,9 +67,9 @@ CREATE TABLE IF NOT EXISTS message
 (
     message_type        VARCHAR(31)           NOT NULL,
     id                  BIGINT auto_increment PRIMARY KEY,
-    content             VARCHAR(255)          NULL,
+    content TEXT    NULL,
     timestamp           timestamp(6)          NULL,
-    score               INT                   NULL,
+    score   DECIMAL NULL,
     is_manual           boolean DEFAULT FALSE NULL,
     prompt_iteration_id BIGINT                NULL,
     CONSTRAINT iteration_message

@@ -10,14 +10,14 @@ import java.sql.Timestamp;
 @DiscriminatorValue("ai")
 public class AIMessageEntity extends MessageEntity {
 
-    private int score;
+    private double score;
     @Column(name = "is_manual", columnDefinition = "boolean default false")
     private boolean manual;
 
     public AIMessageEntity() {
     }
 
-    public AIMessageEntity(String content, Timestamp timestamp, int score, boolean manual, PromptIterationEntity promptIteration) {
+    public AIMessageEntity(String content, Timestamp timestamp, double score, boolean manual, PromptIterationEntity promptIteration) {
         super(content, timestamp, promptIteration);
         this.score = score;
         this.manual = manual;
@@ -29,11 +29,11 @@ public class AIMessageEntity extends MessageEntity {
         this.manual = aiMessageEntity.isManual();
     }
 
-    public int getScore() {
+    public double getScore() {
         return score;
     }
 
-    public void setScore(int score) {
+    public void setScore(double score) {
         this.score = score;
     }
 

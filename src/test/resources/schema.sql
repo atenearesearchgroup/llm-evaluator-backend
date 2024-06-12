@@ -1,81 +1,80 @@
-create schema if not exists mydatabase;
-
-create table if not exists mydatabase.intent_model
+CREATE SCHEMA
+    IF NOT EXISTS hermesanalyzer;
+USE hermesanalyzer;
+CREATE TABLE IF NOT EXISTS intent_model
 (
-    model_name   varchar(255) not null
-        primary key,
-    display_name varchar(255) null
+    model_name   VARCHAR(255) NOT NULL PRIMARY KEY,
+    display_name VARCHAR(255) NULL
 );
-
-create table if not exists mydatabase.intent_instance
+CREATE TABLE IF NOT EXISTS intent_instance
 (
-    id                   bigint       not null auto_increment
-        primary key,
-    platform             varchar(255) null,
-    display_name         varchar(255) null,
-    intent_model_id      varchar(255) null,
-    max_drafts           int          not null,
-    maxk                 int          not null,
-    max_repeating_prompt int          not null,
-    constraint FK6ojoga3xfyits88igt9y1atd7
-        foreign key (intent_model_id) references mydatabase.intent_model (model_name)
-            on delete CASCADE on update CASCADE
+    id                   BIGINT       NOT NULL auto_increment PRIMARY KEY,
+    platform             VARCHAR(255) NULL,
+    display_name         VARCHAR(255) NULL,
+    intent_model_id      VARCHAR(255) NULL,
+    max_chats            INT          NOT NULL,
+    max_errors           INT          NOT NULL,
+    max_repeating_prompt INT          NOT NULL,
+    CONSTRAINT intent_model_instance
+        FOREIGN KEY (intent_model_id)
+            REFERENCES intent_model (model_name)
+            ON DELETE CASCADE
+            ON UPDATE CASCADE
 );
-
-create table if not exists mydatabase.draft
+CREATE TABLE IF NOT EXISTS chat
 (
-    id           bigint not null auto_increment
-        primary key,
-    draft_number int    not null,
-    instance_id  bigint null,
-    finalized    bit    not null,
-    constraint FK8xrqdx3to04ayagov8u18qdpl
-        foreign key (instance_id) references mydatabase.intent_instance (id)
-            on delete CASCADE on update CASCADE
+    id           BIGINT NOT NULL auto_increment PRIMARY KEY,
+    draft_number INT    NOT NULL,
+    instance_id  BIGINT NULL,
+    finalized    BIT    NOT NULL,
+    actual_node  TEXT   NULL,
+    CONSTRAINT instance_chat
+        FOREIGN KEY (instance_id)
+            REFERENCES intent_instance (id)
+            ON DELETE CASCADE
+            ON UPDATE CASCADE
 );
-
-create table if not exists mydatabase.model_settings
+CREATE TABLE IF NOT EXISTS model_settings
 (
-    id                bigint           not null
-        primary key,
-    frequency_penalty float default -1 null,
-    max_tokens        int   default -1 null,
-    model_name        varchar(255)     null,
-    model_owner       varchar(255)     null,
-    presence_penalty  float default -1 null,
-    system_prompt     varchar(255)     null,
-    temperature       float default -1 null,
-    topp              float default -1 null,
-    version           varchar(255)     null,
-    constraint FK4n4ijkx1q8gncr1qj1fpol9r1
-        foreign key (id) references mydatabase.intent_instance (id)
-            on delete CASCADE on update CASCADE
+    id                BIGINT            NOT NULL PRIMARY KEY,
+    frequency_penalty FLOAT DEFAULT - 1 NULL,
+    max_tokens        INT   DEFAULT - 1 NULL,
+    model_name        VARCHAR(255)      NULL,
+    model_owner       VARCHAR(255)      NULL,
+    presence_penalty  FLOAT DEFAULT -1  NULL,
+    system_prompt     VARCHAR(255)      NULL,
+    temperature       FLOAT DEFAULT -1  NULL,
+    topp              FLOAT DEFAULT -1  NULL,
+    version           VARCHAR(255)      NULL,
+    CONSTRAINT instance_model_settings FOREIGN KEY (id)
+        REFERENCES intent_instance (id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
 );
-
-create table if not exists mydatabase.prompt_iteration
+CREATE TABLE IF NOT EXISTS prompt_iteration
 (
-    id        bigint auto_increment
-        primary key,
-    iteration int          not null,
-    type      varchar(255) null,
-    draft_id  bigint       null,
-    constraint FKopttgjigkrdykjqqylv15ldg4
-        foreign key (draft_id) references mydatabase.draft (id)
-            on delete CASCADE on update CASCADE
+    id        BIGINT auto_increment PRIMARY KEY,
+    iteration INT          NOT NULL,
+    type      VARCHAR(255) NULL,
+    chat_id   BIGINT       NULL,
+    CONSTRAINT chat_iteration
+        FOREIGN KEY (chat_id)
+            REFERENCES chat (id)
+            ON DELETE CASCADE
+            ON UPDATE CASCADE
 );
-
-create table if not exists mydatabase.message
+CREATE TABLE IF NOT EXISTS message
 (
-    message_type        varchar(31)           not null,
-    id                  bigint auto_increment
-        primary key,
-    content             varchar(255)          null,
-    timestamp           datetime(6)           null,
-    score               int                   null,
-    is_manual           boolean default false null,
-    prompt_iteration_id bigint                null,
-    constraint FKkr6fop6r5pdynj78o7aypiuai
-        foreign key (prompt_iteration_id) references mydatabase.prompt_iteration (id)
-            on delete CASCADE on update CASCADE
+    message_type        VARCHAR(31)           NOT NULL,
+    id                  BIGINT auto_increment PRIMARY KEY,
+    content             TEXT                  NULL,
+    timestamp           timestamp(6)          NULL,
+    score               DECIMAL               NULL,
+    is_manual           boolean DEFAULT FALSE NULL,
+    prompt_iteration_id BIGINT                NULL,
+    CONSTRAINT iteration_message
+        FOREIGN KEY (prompt_iteration_id)
+            REFERENCES prompt_iteration (id)
+            ON DELETE CASCADE
+            ON UPDATE CASCADE
 );
-

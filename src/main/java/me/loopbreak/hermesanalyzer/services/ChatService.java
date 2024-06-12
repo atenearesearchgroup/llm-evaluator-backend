@@ -173,7 +173,7 @@ public class ChatService {
 //        TODO: Add evaluation of the message
 
         AIMessageEntity aiMessage = createMessage(new CreateMessageRequest(promptIteration.getType(),
-                message.getContent(), 0, false), chatEntity);
+                message.getContent(), 0.0, false), chatEntity);
 
         if (aiMessage == null)
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to create AI message");
