@@ -9,7 +9,9 @@ public enum DefaultPlatforms {
     OPENAI(OpenAIProvider::new),
     MISTRAL(MistralProvider::new),
     HUGGINGFACE(HuggingFaceProvider::new),
-    REPLICATE(ReplicateProvider::new);
+    REPLICATE(ReplicateProvider::new),
+    VERTEXAI(VertexAIProvider::new),
+    DEFAULT(DefaultProvider::new);
 
     private final Supplier<Platform> platformSupplier;
 
