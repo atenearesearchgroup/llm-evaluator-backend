@@ -32,13 +32,15 @@ public class ChatService {
     private final PromptIterationEntityRepository promptIterationEntityRepository;
     private final AiMessageRepository aiMessageRepository;
     private final UserMessageRepository userMessageRepository;
+    private final InstanceService instanceService;
 
     public ChatService(ChatEntityRepository chatEntityRepository,
-                       PromptIterationEntityRepository promptIterationEntityRepository, AiMessageRepository aiMessageRepository, UserMessageRepository userMessageRepository) {
+                       PromptIterationEntityRepository promptIterationEntityRepository, AiMessageRepository aiMessageRepository, UserMessageRepository userMessageRepository, InstanceService instanceService) {
         this.chatEntityRepository = chatEntityRepository;
         this.promptIterationEntityRepository = promptIterationEntityRepository;
         this.aiMessageRepository = aiMessageRepository;
         this.userMessageRepository = userMessageRepository;
+        this.instanceService = instanceService;
     }
 
     public ChatEntity getChat(Long chat) {
@@ -61,50 +63,56 @@ public class ChatService {
         if (chatEntity.isFinalized())
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Chat is finalized");
 
+
         PromptIterationEntity promptIteration = chatEntity.getLastIteration();
 
+        long promptIterationCount = chatEntity.getPromptIterations().stream()
+                .filter(p -> p.getType().equals(request.promptType()))
+                .count();
+
         if (promptIteration == null || !promptIteration.getType().equals(request.promptType())) {
-            long promptCount = chatEntity.getPromptIterations().stream().
-                    filter(p -> p.getType().equals(request.promptType()))
-                    .count();
-            if (promptCount >= chatEntity.getIntentInstance().getMaxRepeatingPrompt())
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                        "Prompt iteration limit reached (" + promptCount + "/"
-                        + chatEntity.getIntentInstance().getMaxRepeatingPrompt() + ")");
+            if (promptIterationCount >= chatEntity.getIntentInstance().getMaxRepeatingPrompt() &&
+                promptIteration != null &&
+                promptIteration.getType().equals(request.promptType())) {
+                setFinalized(chatEntity, true);
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Prompt iteration limit reached (" + promptIterationCount + "/" + chatEntity.getIntentInstance().getMaxRepeatingPrompt() + ")");
+            }
 
             promptIteration = new PromptIterationEntity(request.promptType(), chatEntity, chatEntity.getPromptIterations().size());
             promptIteration = promptIterationEntityRepository.save(promptIteration);
 
             chatEntity.getPromptIterations().add(promptIteration);
         } else {
-//            long messagesCount = promptIteration.getMessages().stream()
-//                    .filter(UserMessageEntity.class::isInstance)
-//                    .count();
+            boolean hasBeenScored = promptIteration.getMessages().stream()
+                                            .filter(AIMessageEntity.class::isInstance)
+                                            .filter(m -> ((AIMessageEntity) m).getScore() != -1)
+                                            .count() > 0;
+            if (hasBeenScored) {
+                if (promptIterationCount >= chatEntity.getIntentInstance().getMaxRepeatingPrompt()) {
+                    setFinalized(chatEntity, true);
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Prompt iteration limit reached (" + promptIterationCount + "/" + chatEntity.getIntentInstance().getMaxRepeatingPrompt() + ")");
+                }
 
-//            take the last message
-            MessageEntity lastMessage = promptIteration.getMessages().stream()
-                    .sorted(Comparator.comparing(MessageEntity::getTimestamp).reversed())
-                    .findFirst()
-                    .orElse(null);
+                promptIteration = new PromptIterationEntity(request.promptType(), chatEntity, chatEntity.getPromptIterations().size());
+                promptIteration = promptIterationEntityRepository.save(promptIteration);
 
-            System.out.println(lastMessage);
+                chatEntity.getPromptIterations().add(promptIteration);
+            } else {
+                MessageEntity lastMessage = promptIteration.getMessages().stream()
+                        .sorted(Comparator.comparing(MessageEntity::getTimestamp).reversed())
+                        .findFirst()
+                        .orElse(null);
 
-            if (lastMessage != null) {
-                if (request.getMessageType().equalsIgnoreCase("user") &&
-                    lastMessage instanceof UserMessageEntity userMessage) {
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Last message was user message");
-                } else if (request.getMessageType().equalsIgnoreCase("ai") &&
-                           lastMessage instanceof AIMessageEntity aiMessage) {
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Last message was AI message");
+                if (lastMessage != null) {
+                    if (request.getMessageType().equalsIgnoreCase("user") &&
+                        lastMessage instanceof UserMessageEntity userMessage) {
+                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Last message was user message");
+                    } else if (request.getMessageType().equalsIgnoreCase("ai") &&
+                               lastMessage instanceof AIMessageEntity aiMessage) {
+                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Last message was AI message");
+                    }
                 }
             }
-
-//            if (!request.getMessageType().equalsIgnoreCase("ai") &&
-//                messagesCount >= chatEntity.getIntentInstance().getMaxErrors())
-//                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-//                        "Messages per prompt limit reached (" + messagesCount + "/"
-//                        + chatEntity.getIntentInstance().getMaxErrors() + ")");
-
         }
 
         T messageEntity = (T) request.toMessageEntity(promptIteration);
