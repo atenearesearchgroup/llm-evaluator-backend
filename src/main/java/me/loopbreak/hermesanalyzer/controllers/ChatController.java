@@ -8,13 +8,14 @@ import me.loopbreak.hermesanalyzer.objects.request.UpdateChatRequest;
 import me.loopbreak.hermesanalyzer.repository.ChatEntityRepository;
 import me.loopbreak.hermesanalyzer.services.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Objects;
 
 @RestController
-@CrossOrigin(origins = {"http://localhost:8080", "http://localhost:4321"})
-@RequestMapping("/chat")
+@CrossOrigin
+@RequestMapping(value = "/chat", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ChatController {
 
     private final ChatEntityRepository chatEntityRepository;

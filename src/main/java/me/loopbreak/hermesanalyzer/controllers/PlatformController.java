@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = {"http://localhost:8080", "http://localhost:4321"})
+@CrossOrigin
 @RequestMapping(value = "/platform", produces = MediaType.APPLICATION_JSON_VALUE)
 public class PlatformController {
 

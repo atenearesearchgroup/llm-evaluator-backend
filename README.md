@@ -56,7 +56,6 @@ DATASOURCE_URL=jdbc:mysql://host.docker.internal:3307/hermesanalyzer
 DATASOURCE_USERNAME=root
 DATASOURCE_PASSWORD=verysecret
 DATASOURCE_SCHEMA=hermesanalyzer
-CORS_ALLOWED_ORIGINS=http://localhost:8080,http://localhost:4321,*
 ```
 
 > **Consideration**: If you are going to use the dockerized version without MySQL added, you must be sure ``DATASOURCE_URL``

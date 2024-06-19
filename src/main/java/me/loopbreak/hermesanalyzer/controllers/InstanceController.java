@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = {"http://localhost:8080", "http://localhost:4321"})
+@CrossOrigin
 @RequestMapping(value = "/instance", produces = MediaType.APPLICATION_JSON_VALUE)
 public class InstanceController {
 
