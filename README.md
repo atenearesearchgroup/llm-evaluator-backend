@@ -81,8 +81,7 @@ docker compose up
 
 ## Technology Stack
 
-This project has been developed with **Java 17** and **Gradle** as the build tool, by using the Framework *
-*[Spring](https://spring.io)**,
+This project has been developed with **Java 17** and **Gradle** as the build tool, by using the Framework **[Spring](https://spring.io)**,
 
 ## Authors
 
