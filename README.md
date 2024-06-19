@@ -38,17 +38,17 @@ To be able to run the project you only need to have installed [Docker](https://w
 #### Step 1: Build
 
 A [Dockerfile](https://github.com/atenearesearchgroup/llm-evaluator-backend/blob/master/Dockerfile) is included in the
-root dir, to generate the needed image to run the backend you need to use the command:
+root dir, to generate the needed image you will need to use the command:
 
 ```
 docker build -t hermesanalyzer/backend .
 ```
 
-This will generate a docker image with the tag `hermesanalyzer/backend`.
+It will have generated a docker image with the tag `hermesanalyzer/backend`.
 
 #### Step 2: Setup env variables and Run the container
 
-Copy ``.env.example`` and rename it to ``.env.docker``, and modify the environment variables. An example of valid
+Copy ``.env.example`` and rename it to ``.env.docker``, then modify the environment variables. An example of valid
 environment file might be:
 
 ```
@@ -59,8 +59,8 @@ DATASOURCE_SCHEMA=hermesanalyzer
 CORS_ALLOWED_ORIGINS=http://localhost:8080,http://localhost:4321,*
 ```
 
-> **Consideration**: If you are going to use the dockerized version without MySQL , you must be sure ``DATASOURCE_URL``
-> environment variable is set to ``host.docker.internal`` if using a localhost database. If you use the Backend + MySQL
+> **Consideration**: If you are going to use the dockerized version without MySQL added, you must be sure ``DATASOURCE_URL``
+> environment variable is set to ``host.docker.internal`` if using a local database. If you use the Backend + MySQL
 > compose you must set it to ``mysql`` as it is the service name.
 
 #### Run the backend
@@ -81,7 +81,7 @@ docker compose up
 
 ## Technology Stack
 
-This project has been developed with **Java 17** and **Gradle** as the build tool, by using the Framework **[Spring](https://spring.io)**,
+This project has been developed with **Java 17** and **Gradle** as the building tool, by using the **[Spring](https://spring.io)** Framework.
 
 ## Authors
 
