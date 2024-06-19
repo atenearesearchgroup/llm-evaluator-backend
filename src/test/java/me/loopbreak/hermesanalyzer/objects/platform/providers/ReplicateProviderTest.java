@@ -56,7 +56,6 @@ class ReplicateProviderTest {
 
         AIMessage aimessage = response.join();
 
-        System.out.println(aimessage);
         assertThat(aimessage.getContent()).isNotEmpty();
     }
 

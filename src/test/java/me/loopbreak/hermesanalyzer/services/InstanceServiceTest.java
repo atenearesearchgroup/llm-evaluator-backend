@@ -15,6 +15,6 @@ class InstanceServiceTest {
     }
 
     @Test
-    void createDraft() {
+    void createChat() {
     }
 }

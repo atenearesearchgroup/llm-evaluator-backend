@@ -1,6 +1,6 @@
 package me.loopbreak.hermesanalyzer.services;
 
-import me.loopbreak.hermesanalyzer.entity.DraftEntity;
+import me.loopbreak.hermesanalyzer.entity.ChatEntity;
 import me.loopbreak.hermesanalyzer.entity.EvaluationSettings;
 import me.loopbreak.hermesanalyzer.entity.IntentInstanceEntity;
 import me.loopbreak.hermesanalyzer.entity.IntentModelEntity;
@@ -23,11 +23,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 @SpringBootTest
-class DraftServiceTest {
+class ChatServiceTest {
 
     private IntentService intentService;
     private InstanceService instanceService;
-    private DraftService draftService;
+    private ChatService chatService;
 
     private IntentModelEntity model = null;
     private IntentInstanceEntity instance;
@@ -35,10 +35,10 @@ class DraftServiceTest {
     private IntentInstanceRepository intentInstanceRepository;
 
     @Autowired
-    public DraftServiceTest(IntentService intentService, InstanceService instanceService, DraftService draftService) {
+    public ChatServiceTest(IntentService intentService, InstanceService instanceService, ChatService chatService) {
         this.intentService = intentService;
         this.instanceService = instanceService;
-        this.draftService = draftService;
+        this.chatService = chatService;
     }
 
     @BeforeEach
@@ -63,10 +63,10 @@ class DraftServiceTest {
 
     @Test
     void createMessage() {
-        CreateMessageRequest request = new CreateMessageRequest("test", "", 0, true);
-        DraftEntity draft = instanceService.createDraft(instance);
+        CreateMessageRequest request = new CreateMessageRequest("test", "", 0.0, true);
+        ChatEntity draft = instanceService.createChat(instance);
 
-        MessageEntity result = draftService.createMessage(request, draft);
+        MessageEntity result = chatService.createMessage(request, draft);
 
         assertThat(result).isNotNull();
         assertThat(draft.getPromptIterations()).hasSize(1);
@@ -80,41 +80,41 @@ class DraftServiceTest {
     @Test
     void createMessage_exceededPromptMessages() {
         CreateMessageRequest request = new CreateMessageRequest("test", "", null, true);
-        CreateMessageRequest aiRequest = new CreateMessageRequest("test", "", 1, true);
-        DraftEntity draft = instanceService.createDraft(instance);
+        CreateMessageRequest aiRequest = new CreateMessageRequest("test", "", 1.0, true);
+        ChatEntity draft = instanceService.createChat(instance);
 
-        draftService.createMessage(request, draft);
-        draftService.createMessage(aiRequest, draft);
+        chatService.createMessage(request, draft);
+        chatService.createMessage(aiRequest, draft);
 
         assertThatExceptionOfType(ResponseStatusException.class)
-                .isThrownBy(() -> draftService.createMessage(request, draft))
-                .has(new Condition<>(e -> e.getReason().equals("Messages per prompt limit reached (1/1)"), "Max messages per prompt type reached"));
+                .isThrownBy(() -> chatService.createMessage(request, draft))
+                .has(new Condition<>(e -> e.getReason().equals("Prompt iteration limit reached (1/1)"), "Max messages per prompt type reached"));
     }
 
     @Test
     void createMessage_exceededPromptIteration() {
         CreateMessageRequest request = new CreateMessageRequest("test", "", null, true);
-        CreateMessageRequest requestType2 = new CreateMessageRequest("test2", "", null, true);
-        DraftEntity draft = instanceService.createDraft(instance);
+        CreateMessageRequest validResponse = new CreateMessageRequest("test", "", 1.0, true);
+        ChatEntity draft = instanceService.createChat(instance);
 
-        draftService.createMessage(request, draft);
-        draftService.createMessage(requestType2, draft);
+        chatService.createMessage(request, draft);
+        chatService.createMessage(validResponse, draft);
 
         assertThatExceptionOfType(ResponseStatusException.class)
-                .isThrownBy(() -> draftService.createMessage(request, draft))
+                .isThrownBy(() -> chatService.createMessage(request, draft))
                 .has(new Condition<>(e -> e.getReason().equals("Prompt iteration limit reached (1/1)"), "Max prompt iteration reached"));
     }
 
     @Test
     void createMessage_draftIsFinalized() {
         CreateMessageRequest request = new CreateMessageRequest("test", "", null, true);
-        DraftEntity draft = instanceService.createDraft(instance);
+        ChatEntity draft = instanceService.createChat(instance);
 
-        draftService.setFinalized(draft, true);
+        chatService.setFinalized(draft, true);
 
         assertThatExceptionOfType(ResponseStatusException.class)
-                .isThrownBy(() -> draftService.createMessage(request, draft))
-                .has(new Condition<>(e -> e.getReason().equals("Draft is finalized"), "Draft is already finalized"));
+                .isThrownBy(() -> chatService.createMessage(request, draft))
+                .has(new Condition<>(e -> e.getReason().equals("Chat is finalized"), "Chat is finalized"));
     }
 
 }
