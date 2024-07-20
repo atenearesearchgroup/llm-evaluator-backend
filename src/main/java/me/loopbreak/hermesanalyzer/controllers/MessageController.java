@@ -1,6 +1,9 @@
 package me.loopbreak.hermesanalyzer.controllers;
 
 import me.loopbreak.hermesanalyzer.entity.messages.AIMessageEntity;
+import me.loopbreak.hermesanalyzer.objects.evaluator.EvaluationResult;
+import me.loopbreak.hermesanalyzer.objects.evaluator.EvaluatorConnector;
+import me.loopbreak.hermesanalyzer.objects.evaluator.FormatConnector;
 import me.loopbreak.hermesanalyzer.objects.request.ScoreMessageRequest;
 import me.loopbreak.hermesanalyzer.repository.message.AiMessageRepository;
 import me.loopbreak.hermesanalyzer.services.ChatService;
@@ -8,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.io.InputStream;
 
 @RestController
 @CrossOrigin
@@ -39,30 +44,23 @@ public class MessageController {
     }
 
     @GetMapping("/{messageId}/evaluate")
-    public int evaluateMessage(@PathVariable Long messageId) {
+    public EvaluationResult evaluateMessage(@PathVariable Long messageId) {
         AIMessageEntity message = aiMessageRepository.findById(messageId).orElse(null);
 
         if (message == null)
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Message not found");
 
-        int score = 30;
+//        TODO: Add formatConnector Dependency Injection
+        FormatConnector formatConnector = null;
 
-//        TODO: Add evaluator bridge
+        InputStream parsedMessage = formatConnector.parse(message.getContent());
+
+//        TODO: Add evaluator Dependency Injection
+        EvaluatorConnector evaluator = null;
+
+        EvaluationResult score = evaluator.evaluate(parsedMessage);
+
 
         return score;
-    }
-
-    @GetMapping("/{messageId}/validate")
-    public boolean scoreMessage(@PathVariable Long messageId) {
-        AIMessageEntity message = aiMessageRepository.findById(messageId).orElse(null);
-
-        if (message == null)
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Message not found");
-
-        boolean valid = true;
-
-//       TODO: Add validation grammar
-
-        return valid;
     }
 }
