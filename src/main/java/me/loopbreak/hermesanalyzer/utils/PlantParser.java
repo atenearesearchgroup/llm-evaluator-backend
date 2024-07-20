@@ -26,6 +26,33 @@ public class PlantParser {
             throw new InvalidModelOutputException("PlantUML not found in content");
         }
 
+        plantUML = plantUML.trim();
+
+        if (plantUML.isBlank()) {
+            return plantUML;
+        }
+
+        String[] lines = plantUML.split("\n");
+
+        if (!lines[0].equals("@startuml")) {
+            if (lines[0].startsWith("@")) {
+                lines[0] = "@startuml";
+                plantUML = String.join("\n", lines);
+            } else {
+                plantUML = "@startuml\n" + plantUML;
+                lines = plantUML.split("\n");
+            }
+        }
+
+        if (!lines[lines.length - 1].equals("@enduml")) {
+            if (lines[lines.length - 1].startsWith("@")) {
+                lines[lines.length - 1] = "@enduml";
+                plantUML = String.join("\n", lines);
+            } else {
+                plantUML = plantUML + "\n@enduml";
+            }
+        }
+
         return plantUML;
     }
 
