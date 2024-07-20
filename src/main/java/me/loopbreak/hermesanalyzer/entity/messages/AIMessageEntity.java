@@ -3,6 +3,8 @@ package me.loopbreak.hermesanalyzer.entity.messages;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
+import me.loopbreak.hermesanalyzer.objects.draft.messages.AIMessage;
+import me.loopbreak.hermesanalyzer.objects.draft.messages.Message;
 
 import java.sql.Timestamp;
 
@@ -48,5 +50,10 @@ public class AIMessageEntity extends MessageEntity {
     @Override
     public AIMessageEntity clone(PromptIterationEntity promptIterationEntity) {
         return new AIMessageEntity(promptIterationEntity, this);
+    }
+
+    @Override
+    public Message toMessage() {
+        return new AIMessage(getContent(), getScore(), getTimestamp());
     }
 }

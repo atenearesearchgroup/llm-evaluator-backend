@@ -3,6 +3,7 @@ package me.loopbreak.hermesanalyzer.entity.messages;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import me.loopbreak.hermesanalyzer.entity.ChatEntity;
+import me.loopbreak.hermesanalyzer.objects.draft.PromptIteration;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -70,6 +71,14 @@ public class PromptIterationEntity {
 
     public PromptIterationEntity clone(ChatEntity chatEntity) {
         return new PromptIterationEntity(chatEntity, this);
+    }
+
+    public PromptIteration toPromptPhase() {
+        PromptIteration promptPhase = new PromptIteration(iteration, type);
+        messages.forEach(message -> {
+            promptPhase.addMessage(message.toMessage());
+        });
+        return promptPhase;
     }
 
     public static class PromptIterationId implements Serializable {

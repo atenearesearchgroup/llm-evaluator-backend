@@ -2,6 +2,7 @@ package me.loopbreak.hermesanalyzer.entity.messages;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import me.loopbreak.hermesanalyzer.objects.draft.messages.Message;
 
 import java.sql.Timestamp;
 import java.util.Objects;
@@ -69,4 +70,6 @@ public abstract class MessageEntity {
     }
 
     public abstract MessageEntity clone(PromptIterationEntity promptIterationEntity);
+
+    public abstract Message toMessage();
 }

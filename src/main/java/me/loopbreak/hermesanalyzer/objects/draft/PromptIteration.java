@@ -11,16 +11,16 @@ import java.util.List;
 
 public class PromptIteration implements Iterable<Message> {
     private int iteration;
-    private int currentK;
+    private String type;
     private List<Message> messages;
 
-    public PromptIteration(int iteration) {
-        this(iteration, 0, new ArrayList<>());
+    public PromptIteration(int iteration, String type) {
+        this(iteration, type, new ArrayList<>());
     }
 
-    public PromptIteration(int iteration, int currentK, List<Message> messages) {
+    public PromptIteration(int iteration, String type, List<Message> messages) {
         this.iteration = iteration;
-        this.currentK = currentK;
+        this.type = type;
         this.messages = messages;
     }
 
@@ -28,8 +28,8 @@ public class PromptIteration implements Iterable<Message> {
         return iteration;
     }
 
-    public int getCurrentK() {
-        return currentK;
+    public String getType() {
+        return type;
     }
 
     public void addMessage(Message message) {

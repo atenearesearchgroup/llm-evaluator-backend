@@ -8,21 +8,21 @@ import java.sql.Timestamp;
 
 public class AIMessage extends Message {
 
-    private int score;
+    private double score;
 
-    public AIMessage(String content, int score, Timestamp timestamp) {
+    public AIMessage(String content, double score, Timestamp timestamp) {
         super(content, timestamp);
         this.score = score;
     }
 
-    public int getScore() {
+    public double getScore() {
         return score;
     }
 
     /**
      * @param score The score to be set 0-100
      */
-    public void setScore(int score) {
+    public void setScore(double score) {
         this.score = score;
     }
 

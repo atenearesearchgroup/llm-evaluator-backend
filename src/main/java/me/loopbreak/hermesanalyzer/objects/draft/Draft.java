@@ -9,17 +9,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
-public class Draft implements Iterable<PromptPhase> {
+public class Draft implements Iterable<PromptIteration> {
     private int currentIteration;
     private String systemPrompt;
     private String id;
-    private List<PromptPhase> history;
+    private List<PromptIteration> history;
 
     public Draft(int currentIteration) {
         this(currentIteration, UUID.randomUUID().toString(), null, new ArrayList<>());
     }
 
-    public Draft(int currentIteration, String id, String systemPrompt, List<PromptPhase> history) {
+    public Draft(int currentIteration, String id, String systemPrompt, List<PromptIteration> history) {
         this.currentIteration = currentIteration;
         this.id = id;
         this.systemPrompt = systemPrompt;
@@ -34,7 +34,7 @@ public class Draft implements Iterable<PromptPhase> {
         return id;
     }
 
-    public List<PromptPhase> getHistory() {
+    public List<PromptIteration> getHistory() {
         return history;
     }
 
@@ -48,17 +48,15 @@ public class Draft implements Iterable<PromptPhase> {
 
     public List<Message> getMessages() {
         List<Message> messages = new ArrayList<>();
-        for (PromptPhase promptPhase : this) {
-            for (PromptIteration iteration : promptPhase) {
-                messages.addAll(iteration.getMessages());
-            }
+        for (PromptIteration iteration : this) {
+            messages.addAll(iteration.getMessages());
         }
         messages.sort(Message::compareTo);
         return messages;
     }
 
     @Override
-    public @NotNull Iterator<PromptPhase> iterator() {
+    public @NotNull Iterator<PromptIteration> iterator() {
         return history.iterator();
     }
 }

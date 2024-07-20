@@ -89,9 +89,9 @@ public class ChatEntity {
     @JsonIgnore
     public Draft toDraft() {
         Draft draft = new Draft(draftNumber);
-//        for (PromptIterationEntity promptIteration : promptIterations) {
-//            draft.getHistory().add(promptIteration.toPromptPhase());
-//        }
+        for (PromptIterationEntity promptIteration : getPromptIterations()) {
+            draft.getHistory().add(promptIteration.toPromptPhase());
+        }
         return draft;
     }
 
