@@ -1,6 +1,7 @@
 package me.loopbreak.hermesanalyzer.objects.evaluator.dto;
 
-import me.loopbreak.hermesanalyzer.objects.evaluator.MarksCalculator;
+import me.loopbreak.hermesanalyzer.objects.evaluator.helpers.MarksCalculator;
+import me.loopbreak.hermesanalyzer.objects.evaluator.helpers.error.ErrorClassifier;
 
 import java.util.List;
 
@@ -12,7 +13,11 @@ public class MarksModel {
     private double maxPoints;
 
     public MarksCalculator getCalculator() {
-        return MarksCalculator.create(this);
+        return MarksCalculator.of(this);
+    }
+
+    public ErrorClassifier getErrorClassifier() {
+        return ErrorClassifier.of(this);
     }
 
     // Getters and Setters

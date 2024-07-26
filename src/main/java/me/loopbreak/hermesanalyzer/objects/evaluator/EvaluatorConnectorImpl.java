@@ -1,16 +1,18 @@
 package me.loopbreak.hermesanalyzer.objects.evaluator;
 
+import me.loopbreak.hermesanalyzer.objects.evaluator.response.EvaluationResult;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.client.RestClient;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
 public class EvaluatorConnectorImpl implements EvaluatorConnector {
 
-    private static final EvaluationResult DEFAULT_RESULT = new EvaluationResult(0.0);
+    private static final EvaluationResult DEFAULT_RESULT = new EvaluationResult(0.0, new ArrayList<>());
     private static final String URL = "https://api.huggingface.co";
 
 //    private final RestClient client = getClient();

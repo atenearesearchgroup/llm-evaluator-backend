@@ -1,4 +1,4 @@
-package me.loopbreak.hermesanalyzer.objects.evaluator;
+package me.loopbreak.hermesanalyzer.objects.evaluator.helpers;
 
 import me.loopbreak.hermesanalyzer.objects.evaluator.dto.CompensationMark;
 import me.loopbreak.hermesanalyzer.objects.evaluator.dto.MarksModel;
@@ -16,7 +16,7 @@ public class MarksCalculator {
         this.marksModel = marksModel;
     }
 
-    public static MarksCalculator create(MarksModel marksModel) {
+    public static MarksCalculator of(MarksModel marksModel) {
         return new MarksCalculator(marksModel);
     }
 

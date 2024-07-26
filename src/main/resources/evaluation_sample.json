@@ -1,0 +1,217 @@
+{
+  "eClass": "http://www.example.org/marks#//MarksModel",
+  "_id": "null",
+  "modelElementCategories": [
+    {
+      "_id": "1",
+      "name": "Classes",
+      "marks": [
+        "16",
+        "20",
+        "22"
+      ],
+      "missedModelElements": [
+        {
+          "_id": "2",
+          "missedElementName": "Car"
+        },
+        {
+          "_id": "3",
+          "missedElementName": "Date"
+        }
+      ],
+      "maxPoints": 8.0
+    },
+    {
+      "_id": "4",
+      "name": "Attributes",
+      "marks": [
+        "24",
+        "26",
+        "28"
+      ],
+      "missedModelElements": [
+        {
+          "_id": "5",
+          "missedElementName": "Car.registrationDate"
+        },
+        {
+          "_id": "6",
+          "missedElementName": "Car.plate"
+        },
+        {
+          "_id": "7",
+          "missedElementName": "Garage.address"
+        }
+      ],
+      "maxPoints": 6.0
+    },
+    {
+      "_id": "8",
+      "name": "Inheritance",
+      "marks": [
+        "18"
+      ],
+      "maxPoints": 2.0
+    },
+    {
+      "_id": "9",
+      "name": "Associations",
+      "marks": [
+        "30"
+      ],
+      "missedModelElements": [
+        {
+          "_id": "10",
+          "missedElementName": "association Car_Service from Car to Service"
+        }
+      ],
+      "maxPoints": 4.0
+    },
+    {
+      "_id": "11",
+      "name": "Association Ends",
+      "marks": [
+        "32",
+        "34"
+      ],
+      "maxPoints": 3.0
+    },
+    {
+      "_id": "12",
+      "name": "Enumeration Types",
+      "marks": [
+        "36"
+      ],
+      "missedModelElements": [
+        {
+          "_id": "13",
+          "missedElementName": "ServiceType",
+          "compensationMark": {
+            "_id": "14",
+            "points": 1.0,
+            "comment": "Model uses Boolean instead."
+          }
+        }
+      ],
+      "maxPoints": 2.0
+    }
+  ],
+  "marksMap": [
+    {
+      "_id": "15",
+      "key": "null",
+      "value": {
+        "_id": "16",
+        "points": 2.0,
+        "comment": "Equivalent to solution class OfficialGarage.",
+        "modelElementCategory": "1",
+        "featureMarks": [
+          {
+            "_id": "17",
+            "mark": {
+              "_id": "18",
+              "points": 2.0,
+              "comment": "Full marks",
+              "modelElementCategory": "8",
+              "modelElementName": "Inheritance between OfficialGarage and Garage"
+            },
+            "featureName": "superTypes",
+            "referencedObjectName": "OfficialGarage"
+          }
+        ]
+      }
+    },
+    {
+      "_id": "19",
+      "key": "null",
+      "value": {
+        "_id": "20",
+        "points": 2.0,
+        "comment": "Equivalent to solution class Service.",
+        "modelElementCategory": "1"
+      }
+    },
+    {
+      "_id": "21",
+      "key": "null",
+      "value": {
+        "_id": "22",
+        "points": 2.0,
+        "comment": "Equivalent to solution class Garage.",
+        "modelElementCategory": "1"
+      }
+    },
+    {
+      "_id": "23",
+      "key": "null",
+      "value": {
+        "_id": "24",
+        "points": 1.0,
+        "comment": "Equivalent to solution attribute OfficialGarage.warranty.",
+        "modelElementCategory": "4"
+      }
+    },
+    {
+      "_id": "25",
+      "key": "null",
+      "value": {
+        "_id": "26",
+        "points": 1.0,
+        "comment": "Equivalent to solution attribute Service.date.",
+        "modelElementCategory": "4"
+      }
+    },
+    {
+      "_id": "27",
+      "key": "null",
+      "value": {
+        "_id": "28",
+        "points": 1.0,
+        "comment": "Equivalent to solution attribute Service.type.",
+        "modelElementCategory": "4"
+      }
+    },
+    {
+      "_id": "29",
+      "key": "null",
+      "value": {
+        "_id": "30",
+        "points": 2.0,
+        "comment": "Equivalent to solution association Service_Garage.",
+        "modelElementCategory": "9"
+      }
+    },
+    {
+      "_id": "31",
+      "key": "null",
+      "value": {
+        "_id": "32",
+        "points": 1.0,
+        "comment": "Equivalent to solution association end Service.place.",
+        "modelElementCategory": "11"
+      }
+    },
+    {
+      "_id": "33",
+      "key": "null",
+      "value": {
+        "_id": "34",
+        "points": 1.0,
+        "comment": "Equivalent to solution association end Garage.services.",
+        "modelElementCategory": "11"
+      }
+    },
+    {
+      "_id": "35",
+      "key": "null",
+      "value": {
+        "_id": "36",
+        "points": 1.0,
+        "comment": "Equivalent to solution enumeration type WarrantyType.",
+        "modelElementCategory": "12"
+      }
+    }
+  ],
+  "maxPoints": 25.0
+}
