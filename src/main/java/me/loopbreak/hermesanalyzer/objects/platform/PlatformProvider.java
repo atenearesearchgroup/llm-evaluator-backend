@@ -14,7 +14,12 @@ public class PlatformProvider {
         Map<String, Platform> defaults = new HashMap<>();
 
         for (DefaultPlatforms value : DefaultPlatforms.values()) {
-            defaults.put(value.name().toLowerCase(), value.getPlatform());
+            try {
+                defaults.put(value.name().toLowerCase(), value.getPlatform());
+            } catch (Exception exception) {
+                System.out.println("Failed to register default platform " + value.name());
+                exception.printStackTrace();
+            }
         }
 
         return defaults;

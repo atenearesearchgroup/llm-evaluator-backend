@@ -4,7 +4,6 @@ import com.google.auth.Credentials;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.vertexai.VertexAI;
 import me.loopbreak.hermesanalyzer.objects.platform.connectors.vertex.VertexConnectionProperties;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -14,9 +13,12 @@ import java.io.IOException;
 @Service
 public class VertexAIProviderService extends AbstractProviderService<VertexConnectionProperties, VertexAI> {
 
+    private static VertexAIProviderService instance;
+
     @Autowired
     public VertexAIProviderService(VertexConnectionProperties options) {
         super(options);
+        instance = this;
     }
 
     @Override
@@ -37,6 +39,9 @@ public class VertexAIProviderService extends AbstractProviderService<VertexConne
     }
 
     public static VertexAIProviderService getInstance() {
-        return BeanUtils.instantiateClass(VertexAIProviderService.class);
+        if (instance == null) {
+            System.out.println("VertexAIProviderService instance is null");
+        }
+        return instance;
     }
 }
