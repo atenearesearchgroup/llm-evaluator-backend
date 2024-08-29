@@ -28,6 +28,11 @@ public class InstanceController {
         this.intentInstanceRepository = intentInstanceRepository;
     }
 
+    @GetMapping
+    public List<IntentInstanceEntity> getInstances(@RequestParam(value = "title", required = false) String title) {
+        return instanceService.getInstances(title);
+    }
+
     @GetMapping("/{instance}")
     public IntentInstanceEntity getInstance(@PathVariable Long instance) {
         return instanceService.getInstance(instance);

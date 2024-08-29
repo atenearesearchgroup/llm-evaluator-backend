@@ -1,7 +1,6 @@
 package me.loopbreak.hermesanalyzer.controllers;
 
 import me.loopbreak.hermesanalyzer.entity.ChatEntity;
-import me.loopbreak.hermesanalyzer.entity.messages.AIMessageEntity;
 import me.loopbreak.hermesanalyzer.entity.messages.MessageEntity;
 import me.loopbreak.hermesanalyzer.objects.request.CreateMessageRequest;
 import me.loopbreak.hermesanalyzer.objects.request.UpdateChatRequest;
@@ -51,7 +50,7 @@ public class ChatController {
     }
 
     @PostMapping("/{chat}/message/generate")
-    public AIMessageEntity generateMessage(@PathVariable Long chat) {
+    public String generateMessage(@PathVariable Long chat) {
         ChatEntity chatEntity = chatService.getChat(chat);
 
         return chatService.generateMessage(chatEntity);

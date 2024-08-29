@@ -1,7 +1,18 @@
+//import shade
+buildscript {
+    repositories {
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath 'com.github.johnrengelman:shadow:8.1.1'
+    }
+}
+
 plugins {
     id 'java'
     id 'org.springframework.boot' version '3.2.5'
     id 'io.spring.dependency-management' version '1.1.4'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 group = 'me.loopbreak'
@@ -12,8 +23,17 @@ java {
 }
 
 repositories {
+    mavenLocal()
     mavenCentral()
     maven { url 'https://repo.spring.io/milestone' }
+    maven {
+        name = "scorerepo"
+        url = "https://www.cs.mcgill.ca/~joerg/maven2/"
+    }
+    maven {
+        name = "jitpack"
+        url = "https://jitpack.io"
+    }
 }
 
 ext {
@@ -21,6 +41,22 @@ ext {
 }
 
 dependencies {
+    compileOnly 'ca.mcgill.sel:common-dependencies:1.0'
+//    implementation files('libs/PumlToCore-1.0-SNAPSHOT.jar')
+    implementation 'edu.atenearesearchgroup:PumlToCore:1.0-SNAPSHOT'
+//exclude commons-logging
+//    implementation files('libs/ClassdiagramGrader-jar-with-dependencies.jar')
+
+    implementation('org.antlr:antlr4-runtime:4.5') {
+        version {
+            strictly '4.5'
+        }
+    }
+    implementation('org.antlr:antlr4:4.5') {
+        version {
+            strictly '4.5'
+        }
+    }
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
@@ -40,6 +76,7 @@ dependencies {
     runtimeOnly 'com.mysql:mysql-connector-j'
     runtimeOnly 'org.postgresql:postgresql'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
 }
 
 dependencyManagement {
@@ -51,3 +88,16 @@ dependencyManagement {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+
+//project.tasks.assemble {
+//    dependsOn(project.tasks.shadowJar)
+////    dependsOn(reobfJar)
+//}
+//import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+//
+//tasks.named('shadowJar', ShadowJar) {
+//    minimize()
+//    enableRelocation true
+//    relocationPrefix "me.loopbreak.firetags.libs"
+//}

@@ -1,9 +1,11 @@
 package me.loopbreak.hermesanalyzer.controllers;
 
 import me.loopbreak.hermesanalyzer.entity.messages.AIMessageEntity;
-import me.loopbreak.hermesanalyzer.objects.evaluator.EvaluationResult;
+import me.loopbreak.hermesanalyzer.objects.evaluator.DummyConnectorImpl;
 import me.loopbreak.hermesanalyzer.objects.evaluator.EvaluatorConnector;
 import me.loopbreak.hermesanalyzer.objects.evaluator.FormatConnector;
+import me.loopbreak.hermesanalyzer.objects.evaluator.FormatConnectorImpl;
+import me.loopbreak.hermesanalyzer.objects.evaluator.response.EvaluationResult;
 import me.loopbreak.hermesanalyzer.objects.request.ScoreMessageRequest;
 import me.loopbreak.hermesanalyzer.repository.message.AiMessageRepository;
 import me.loopbreak.hermesanalyzer.services.ChatService;
@@ -11,8 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.io.InputStream;
 
 @RestController
 @CrossOrigin
@@ -51,15 +51,22 @@ public class MessageController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Message not found");
 
 //        TODO: Add formatConnector Dependency Injection
-        FormatConnector formatConnector = null;
+        FormatConnector formatConnector = new FormatConnectorImpl();
+//        FormatConnector formatConnector = new DummyFormatConnector();
 
-        InputStream parsedMessage = formatConnector.parse(message.getContent());
+//        System.out.println("message.getContent() = " + message.getContent());
+
+//        InputStream parsedMessage = formatConnector.parse(message.getContent());
 
 //        TODO: Add evaluator Dependency Injection
-        EvaluatorConnector evaluator = null;
+        EvaluatorConnector evaluator = new DummyConnectorImpl();
 
-        EvaluationResult score = evaluator.evaluate(parsedMessage);
+//        EvaluationResult score = evaluator.evaluate(parsedMessage);
+        EvaluationResult score = evaluator.evaluate(null);
+//        score.withDiagram(message.toMessage().getOutputDiagram());
 
+//        message.setScore(score.score());
+//        aiMessageRepository.save(message);
 
         return score;
     }

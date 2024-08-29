@@ -15,7 +15,7 @@ import java.util.List;
 public class DummyConnectorImpl implements EvaluatorConnector {
 
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    private static final EvaluationResult DEFAULT_RESULT = new EvaluationResult(0.0, List.of());
+    private static final EvaluationResult DEFAULT_RESULT = new EvaluationResult(0.0, List.of(), null);
     private static final String URL = "https://api.huggingface.co";
 
     @Override
@@ -32,7 +32,7 @@ public class DummyConnectorImpl implements EvaluatorConnector {
         List<CategoryError> errors = model.getErrorClassifier().classify();
 
 
-        EvaluationResult result = new EvaluationResult(score, errors);
+        EvaluationResult result = new EvaluationResult(score, errors, null);
 
         return result;
     }
