@@ -63,7 +63,6 @@ public class ChatService {
         if (chatEntity.isFinalized())
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Chat is finalized");
 
-
         PromptIterationEntity promptIteration = chatEntity.getLastIteration();
 
         long promptIterationCount = chatEntity.getPromptIterations().stream()
@@ -85,7 +84,7 @@ public class ChatService {
         } else {
             boolean hasBeenScored = promptIteration.getMessages().stream()
                                             .filter(AIMessageEntity.class::isInstance)
-                                            .filter(m -> ((AIMessageEntity) m).getScore() != -1)
+                                            .filter(m -> ((AIMessageEntity) m).getScore() > -1)
                                             .count() > 0;
             if (hasBeenScored) {
                 if (promptIterationCount >= chatEntity.getIntentInstance().getMaxRepeatingPrompt()) {
@@ -144,13 +143,7 @@ public class ChatService {
         return messageEntity;
     }
 
-    /**
-     * TODO: Add evaluation of the message, need the evaluator bridge in order to work
-     *
-     * @param chatEntity
-     * @return
-     */
-    public AIMessageEntity generateMessage(ChatEntity chatEntity) {
+    public String generateMessage(ChatEntity chatEntity) {
         IntentInstanceEntity intentInstance = chatEntity.getIntentInstance();
         ModelSettingsEntity modelSettings = intentInstance.getModelSettings();
         Platform platform = PlatformProvider.getProvider(intentInstance.getPlatform());
@@ -178,14 +171,6 @@ public class ChatService {
 
         AIMessage message = model.send(chatEntity.toDraft()).join();
 
-//        TODO: Add evaluation of the message
-
-        AIMessageEntity aiMessage = createMessage(new CreateMessageRequest(promptIteration.getType(),
-                message.getContent(), 0.0, false), chatEntity);
-
-        if (aiMessage == null)
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to create AI message");
-
-        return aiMessage;
+        return message.getContent();
     }
 }
