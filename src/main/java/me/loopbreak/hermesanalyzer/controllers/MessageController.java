@@ -3,14 +3,14 @@ package me.loopbreak.hermesanalyzer.controllers;
 import me.loopbreak.hermesanalyzer.entity.messages.AIMessageEntity;
 import me.loopbreak.hermesanalyzer.hooks.format.FormatConnector;
 import me.loopbreak.hermesanalyzer.hooks.format.FormatConnectorImpl;
-import me.loopbreak.hermesanalyzer.hooks.grader.DummyConnectorImpl;
 import me.loopbreak.hermesanalyzer.hooks.grader.EvaluatorConnector;
+import me.loopbreak.hermesanalyzer.hooks.grader.EvaluatorConnectorImpl;
 import me.loopbreak.hermesanalyzer.objects.grader.EvaluationResult;
 import me.loopbreak.hermesanalyzer.objects.request.ScoreMessageRequest;
 import me.loopbreak.hermesanalyzer.repository.message.AiMessageRepository;
-import me.loopbreak.hermesanalyzer.services.ChatService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -22,11 +22,15 @@ import java.nio.file.Path;
 public class MessageController {
 
 
-    private final ChatService chatService;
     private final AiMessageRepository aiMessageRepository;
 
-    public MessageController(ChatService chatService, AiMessageRepository aiMessageRepository) {
-        this.chatService = chatService;
+    //        TODO: Add formatConnector Dependency Injection
+    private FormatConnector formatConnector = new FormatConnectorImpl();
+    //        TODO: Add evaluator Dependency Injection
+    private EvaluatorConnector evaluator = new EvaluatorConnectorImpl();
+
+
+    public MessageController(AiMessageRepository aiMessageRepository) {
         this.aiMessageRepository = aiMessageRepository;
     }
 
@@ -46,29 +50,20 @@ public class MessageController {
     }
 
     @GetMapping("/{messageId}/evaluate")
+    @Async
     public EvaluationResult evaluateMessage(@PathVariable Long messageId) {
         AIMessageEntity message = aiMessageRepository.findById(messageId).orElse(null);
 
         if (message == null)
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Message not found");
 
-//        TODO: Add formatConnector Dependency Injection
-        FormatConnector formatConnector = new FormatConnectorImpl();
-//        FormatConnector formatConnector = new DummyFormatConnector();
-
-//        System.out.println("message.getContent() = " + message.getContent());
-
         FormatConnector.FormattedUml parsedMessage = formatConnector.parse(message.getContent());
-
-//        TODO: Add evaluator Dependency Injection
-        EvaluatorConnector evaluator = new DummyConnectorImpl();
 
         String modelId = message.getPromptIteration().getChat().getIntentInstance().getIntentModel().getModelName();
 
         Path solutionFile = FileController.UPLOADS_DIR.resolve(modelId).resolve(modelId + ".domain_model.cdm");
 
         EvaluationResult score = evaluator.evaluate(parsedMessage.transformed(), solutionFile);
-//        EvaluationResult score = evaluator.evaluate(null);
         score.withDiagram(parsedMessage.plantUmlCode());
 
 //        message.setScore(score.score());
