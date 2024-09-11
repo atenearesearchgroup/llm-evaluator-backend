@@ -1,11 +1,11 @@
 package me.loopbreak.hermesanalyzer.controllers;
 
 import me.loopbreak.hermesanalyzer.entity.messages.AIMessageEntity;
-import me.loopbreak.hermesanalyzer.objects.evaluator.DummyConnectorImpl;
-import me.loopbreak.hermesanalyzer.objects.evaluator.EvaluatorConnector;
-import me.loopbreak.hermesanalyzer.objects.evaluator.FormatConnector;
-import me.loopbreak.hermesanalyzer.objects.evaluator.FormatConnectorImpl;
-import me.loopbreak.hermesanalyzer.objects.evaluator.response.EvaluationResult;
+import me.loopbreak.hermesanalyzer.hooks.format.FormatConnector;
+import me.loopbreak.hermesanalyzer.hooks.format.FormatConnectorImpl;
+import me.loopbreak.hermesanalyzer.hooks.grader.DummyConnectorImpl;
+import me.loopbreak.hermesanalyzer.hooks.grader.EvaluatorConnector;
+import me.loopbreak.hermesanalyzer.objects.grader.EvaluationResult;
 import me.loopbreak.hermesanalyzer.objects.request.ScoreMessageRequest;
 import me.loopbreak.hermesanalyzer.repository.message.AiMessageRepository;
 import me.loopbreak.hermesanalyzer.services.ChatService;
@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.nio.file.Path;
 
 @RestController
 @CrossOrigin
@@ -56,14 +58,18 @@ public class MessageController {
 
 //        System.out.println("message.getContent() = " + message.getContent());
 
-//        InputStream parsedMessage = formatConnector.parse(message.getContent());
+        FormatConnector.FormattedUml parsedMessage = formatConnector.parse(message.getContent());
 
 //        TODO: Add evaluator Dependency Injection
         EvaluatorConnector evaluator = new DummyConnectorImpl();
 
-//        EvaluationResult score = evaluator.evaluate(parsedMessage);
-        EvaluationResult score = evaluator.evaluate(null);
-//        score.withDiagram(message.toMessage().getOutputDiagram());
+        String modelId = message.getPromptIteration().getChat().getIntentInstance().getIntentModel().getModelName();
+
+        Path solutionFile = FileController.UPLOADS_DIR.resolve(modelId).resolve(modelId + ".domain_model.cdm");
+
+        EvaluationResult score = evaluator.evaluate(parsedMessage.transformed(), solutionFile);
+//        EvaluationResult score = evaluator.evaluate(null);
+        score.withDiagram(parsedMessage.plantUmlCode());
 
 //        message.setScore(score.score());
 //        aiMessageRepository.save(message);

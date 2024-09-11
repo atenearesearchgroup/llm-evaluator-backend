@@ -45,7 +45,7 @@ dependencies {
 //    implementation files('libs/PumlToCore-1.0-SNAPSHOT.jar')
     implementation 'edu.atenearesearchgroup:PumlToCore:1.0-SNAPSHOT'
 //exclude commons-logging
-//    implementation files('libs/ClassdiagramGrader-jar-with-dependencies.jar')
+    implementation files('libs/ClassdiagramGrader-jar-with-dependencies.jar')
 
     implementation('org.antlr:antlr4-runtime:4.5') {
         version {

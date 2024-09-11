@@ -19,6 +19,8 @@ import java.nio.file.Path;
 @RequestMapping(value = "/file")
 public class FileController {
 
+    public static final Path UPLOADS_DIR = Path.of("uploads");
+
     @PostMapping("/upload/{name}")
     @ResponseStatus(HttpStatus.OK)
     public void uploadFile(@RequestBody MultipartFile file, @PathVariable String name) {
@@ -40,8 +42,7 @@ public class FileController {
 
     @Nullable
     private Resource loadFile(String name, String fileName) {
-        Path dir = Path.of("uploads");
-        Path identifierDir = dir.resolve(name);
+        Path identifierDir = UPLOADS_DIR.resolve(name);
         Path filePath = identifierDir.resolve(fileName);
 
         if (!Files.exists(filePath))
@@ -62,16 +63,14 @@ public class FileController {
     }
 
     private void saveFile(MultipartFile file, String identifier) {
-        Path dir = Path.of("uploads");
-
-        if (!Files.exists(dir))
+        if (!Files.exists(UPLOADS_DIR))
             try {
-                Files.createDirectory(dir);
+                Files.createDirectory(UPLOADS_DIR);
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
-        Path identifierDir = dir.resolve(identifier);
+        Path identifierDir = UPLOADS_DIR.resolve(identifier);
 
         if (!Files.exists(identifierDir))
             try {
