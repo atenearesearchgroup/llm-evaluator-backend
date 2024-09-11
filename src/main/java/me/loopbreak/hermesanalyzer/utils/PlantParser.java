@@ -20,7 +20,11 @@ public class PlantParser {
      * @throws InvalidModelOutputException If the PlantUML is not found in the content
      */
     public static String getPlantUML(String content) throws InvalidModelOutputException {
-        String plantUML = getByMarkdownRegex(content);
+        String plantUML = getByUmlBracket(content);
+
+        if (plantUML == null) {
+            plantUML = getByMarkdownRegex(content);
+        }
 
         if (plantUML == null) {
             throw new InvalidModelOutputException("PlantUML not found in content");
@@ -63,6 +67,18 @@ public class PlantParser {
             return matcher.group(1);
         }
         return null;
+    }
+
+    @Nullable
+    private static String getByUmlBracket(String content) {
+        int start = content.indexOf("@startuml");
+        int end = content.indexOf("@enduml");
+
+        if (start == -1 || end == -1) {
+            return null;
+        }
+
+        return content.substring(start, end + 7);
     }
 
 

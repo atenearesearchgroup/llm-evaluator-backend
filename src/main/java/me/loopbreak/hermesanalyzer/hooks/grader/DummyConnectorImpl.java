@@ -5,7 +5,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
 import me.loopbreak.hermesanalyzer.objects.grader.CategoryError;
 import me.loopbreak.hermesanalyzer.objects.grader.EvaluationResult;
-import me.loopbreak.hermesanalyzer.objects.grader.EvaluatorSample;
 import me.loopbreak.hermesanalyzer.objects.grader.dto.MarksModel;
 import org.jetbrains.annotations.Nullable;
 

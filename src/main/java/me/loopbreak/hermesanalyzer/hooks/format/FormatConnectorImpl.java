@@ -24,7 +24,7 @@ public class FormatConnectorImpl implements FormatConnector {
 //        TextToPumlModel textToPumlMapper = new TextToPumlModel(args[0]);
         try {
             UUID uuid = UUID.randomUUID();
-            String filePath = "cache/{0}.cdm".formatted(uuid);
+            String filePath = "cache/%s.cdm".formatted(uuid);
 
             PumlModel model = map(plantUmlCode);
             PumlModelToCOREMapper modelMapper = new PumlModelToCOREMapper(model);

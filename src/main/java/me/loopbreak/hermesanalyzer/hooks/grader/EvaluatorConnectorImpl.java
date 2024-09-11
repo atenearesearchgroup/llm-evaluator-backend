@@ -14,7 +14,6 @@ import me.loopbreak.hermesanalyzer.objects.grader.EvaluationResult;
 import me.loopbreak.hermesanalyzer.objects.grader.helpers.MarksCalculator;
 import me.loopbreak.hermesanalyzer.objects.grader.helpers.error.ErrorClassifier;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -61,11 +60,7 @@ public class EvaluatorConnectorImpl implements EvaluatorConnector {
                 }
             });
 
-//    private final RestClient client = getClient();
-
-    //    TODO: Implement evaluation logic
     @Override
-
     public EvaluationResult evaluate(InputStream text, Path solutionFile) {
         MarksModel model = null;
         try {
@@ -73,11 +68,6 @@ public class EvaluatorConnectorImpl implements EvaluatorConnector {
                     solutionFile.toAbsolutePath().toString());
         } catch (IOException e) {
             throw new RuntimeException(e);
-        }
-
-        if (model == null) {
-            System.out.println("Model is null");
-            return DEFAULT_RESULT;
         }
 
         double score = MarksCalculator.of(model).calculateMarks();
@@ -93,65 +83,42 @@ public class EvaluatorConnectorImpl implements EvaluatorConnector {
         return tempFile;
     }
 
-    private static MarksModel gradeClassdiagram(Path solutionFile, Path marksModelFile, Path attemptFile) {
+    @NotNull
+    private static MarksModel gradeClassdiagram(Path solutionFile, Path attemptFile) {
         // Load the class diagrams
         ClassDiagram solution = classDiagramCache.getUnchecked(solutionFile);
-//        if (solutionFile.getName().endsWith(UML_SUFFIX)) {
-//            solution = Uml2CdmConverter.convertUMLtoCdm(solutionFile);
-//        } else {
-//            solution = (ClassDiagram) ResourceManager.loadModel(solutionFile);
-//        }
         ClassDiagram attempt = classDiagramCache.getUnchecked(attemptFile);
-
-//        if (attemptFile.getName().endsWith(UML_SUFFIX)) {
-//            attempt = Uml2CdmConverter.convertUMLtoCdm(attemptFile);
-//        } else {
-//            attempt = (ClassDiagram) ResourceManager.loadModel(attemptFile);
-//        }
         MarksModel solutionMarks = emptyMarksModelCache.getUnchecked(solution);
-
-//        if (marksModelFile == null) {
-//            solutionMarks = initializeSolutionMarks(solution);
-//        }
 
         return ClassdiagramGraderAlgorithm.gradeClassdiagram(solution, solutionMarks, attempt);
     }
 
-    @Nullable
+    @NotNull
     private static MarksModel generateMarks(String attemptFilePath, String solutionFilePath) {
         Path solutionPath = Paths.get(solutionFilePath);
-        File solutionFile = null;
-        if (!Files.exists(solutionPath)) {
-            System.out.println("Cannot find solution file: " + solutionFile + DOT);
-            return null;
-        } else {
-            solutionFile = solutionPath.toFile();
-        }
+        if (!Files.exists(solutionPath))
+            throw new RuntimeException("Cannot find solution file: " + solutionFilePath + DOT);
+
         Path attemptPath = Paths.get(attemptFilePath);
-        File attemptFile = null;
-        if (!Files.exists(attemptPath)) {
-            System.out.println("Cannot find attempt file: " + attemptFilePath + DOT);
-            return null;
-        } else {
-            attemptFile = attemptPath.toFile();
-        }
+        if (!Files.exists(attemptPath))
+            throw new RuntimeException("Cannot find attempt file: " + attemptFilePath + DOT);
 
         initialize();
 
-        return gradeClassdiagram(solutionPath, null, attemptPath);
+        return gradeClassdiagram(solutionPath, attemptPath);
     }
 
-    private static boolean IS_INITIALIZED = false;
+    private static boolean isInitialized = false;
 
     private static void initialize() {
-        if (IS_INITIALIZED) {
+        if (isInitialized) {
             return;
         }
 
         ClassdiagramGrader.initializeEMF();
         ClassdiagramGrader.initializeCdm();
         ClassdiagramGrader.initializeMarks();
-        IS_INITIALIZED = true;
+        isInitialized = true;
     }
 
 
