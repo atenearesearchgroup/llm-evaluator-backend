@@ -16,6 +16,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.nio.file.Path;
 
+import static me.loopbreak.hermesanalyzer.services.ChatService.MESSAGE_INVALID_SYNTAX_SCORE;
+
 @RestController
 @CrossOrigin
 @RequestMapping(value = "/message", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -57,17 +59,22 @@ public class MessageController {
         if (message == null)
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Message not found");
 
-        FormatConnector.FormattedUml parsedMessage = formatConnector.parse(message.getContent());
-
         String modelId = message.getPromptIteration().getChat().getIntentInstance().getIntentModel().getModelName();
-
         Path solutionFile = FileController.UPLOADS_DIR.resolve(modelId).resolve(modelId + ".domain_model.cdm");
+
+        FormatConnector.FormattedUml parsedMessage;
+        try {
+            parsedMessage = formatConnector.parse(message.getContent());
+        } catch (Exception e) {
+            /**
+             * If the message is not a valid plantUML code, return {@link MESSAGE_INVALID_SYNTAX_SCORE} as score
+             */
+            EvaluationResult maxScore = evaluator.evaluate(null, solutionFile);
+            return new EvaluationResult(MESSAGE_INVALID_SYNTAX_SCORE, maxScore.maxScore(), null, null);
+        }
 
         EvaluationResult score = evaluator.evaluate(parsedMessage.transformed(), solutionFile);
         score.withDiagram(parsedMessage.plantUmlCode());
-
-//        message.setScore(score.score());
-//        aiMessageRepository.save(message);
 
         return score;
     }

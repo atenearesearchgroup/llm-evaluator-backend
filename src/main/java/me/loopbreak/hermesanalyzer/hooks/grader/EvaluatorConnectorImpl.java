@@ -14,6 +14,7 @@ import me.loopbreak.hermesanalyzer.objects.grader.EvaluationResult;
 import me.loopbreak.hermesanalyzer.objects.grader.helpers.MarksCalculator;
 import me.loopbreak.hermesanalyzer.objects.grader.helpers.error.ErrorClassifier;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -61,10 +62,11 @@ public class EvaluatorConnectorImpl implements EvaluatorConnector {
             });
 
     @Override
-    public EvaluationResult evaluate(InputStream text, Path solutionFile) {
+    public EvaluationResult evaluate(@Nullable InputStream text, Path solutionFile) {
         MarksModel model = null;
         try {
-            model = generateMarks(generateTempFile(text).toAbsolutePath().toString(),
+            Path path = generateTempFile(text);
+            model = generateMarks(path != null ? path.toAbsolutePath().toString() : null,
                     solutionFile.toAbsolutePath().toString());
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -76,7 +78,10 @@ public class EvaluatorConnectorImpl implements EvaluatorConnector {
         return new EvaluationResult(score, model.getMaxPoints(), errors, null);
     }
 
+    @Nullable
     private Path generateTempFile(InputStream text) throws IOException {
+        if (text == null) return null;
+
         String id = UUID.randomUUID().toString();
         Path tempFile = Files.createTempFile(id, ".cdm");
         Files.write(tempFile, text.readAllBytes());
@@ -84,25 +89,34 @@ public class EvaluatorConnectorImpl implements EvaluatorConnector {
     }
 
     @NotNull
-    private static MarksModel gradeClassdiagram(Path solutionFile, Path attemptFile) {
+    private static MarksModel gradeClassdiagram(Path solutionFile, @Nullable Path attemptFile) {
         // Load the class diagrams
         ClassDiagram solution = classDiagramCache.getUnchecked(solutionFile);
-        ClassDiagram attempt = classDiagramCache.getUnchecked(attemptFile);
         MarksModel solutionMarks = emptyMarksModelCache.getUnchecked(solution);
+
+        if (attemptFile == null) {
+            double maxScore = MarksCalculator.of(solutionMarks).calculateMarks();
+            solutionMarks.setMaxPoints(maxScore);
+            return solutionMarks;
+        }
+
+        ClassDiagram attempt = classDiagramCache.getUnchecked(attemptFile);
 
         return ClassdiagramGraderAlgorithm.gradeClassdiagram(solution, solutionMarks, attempt);
     }
 
     @NotNull
-    private static MarksModel generateMarks(String attemptFilePath, String solutionFilePath) {
+    private static MarksModel generateMarks(@Nullable String attemptFilePath, String solutionFilePath) {
         Path solutionPath = Paths.get(solutionFilePath);
         if (!Files.exists(solutionPath))
             throw new RuntimeException("Cannot find solution file: " + solutionFilePath + DOT);
 
-        Path attemptPath = Paths.get(attemptFilePath);
-        if (!Files.exists(attemptPath))
-            throw new RuntimeException("Cannot find attempt file: " + attemptFilePath + DOT);
-
+        Path attemptPath = null;
+        if (attemptFilePath != null) {
+            attemptPath = Paths.get(attemptFilePath);
+            if (!Files.exists(attemptPath))
+                throw new RuntimeException("Cannot find attempt file: " + attemptFilePath + DOT);
+        }
         initialize();
 
         return gradeClassdiagram(solutionPath, attemptPath);

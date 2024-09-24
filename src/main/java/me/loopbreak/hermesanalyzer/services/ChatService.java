@@ -28,6 +28,8 @@ import java.util.Comparator;
 public class ChatService {
 
 
+    public static final int MESSAGE_INVALID_SYNTAX_SCORE = -1;
+    public static final int MESSAGE_NOT_SET_SCORE = -2;
     private final ChatEntityRepository chatEntityRepository;
     private final PromptIterationEntityRepository promptIterationEntityRepository;
     private final AiMessageRepository aiMessageRepository;
@@ -69,7 +71,9 @@ public class ChatService {
                 .filter(p -> p.getType().equals(request.promptType()))
                 .count();
 
+//       If there is no prompt iteration for the current state or the prompt type is different
         if (promptIteration == null || !promptIteration.getType().equals(request.promptType())) {
+//            If the prompt iteration count is greater than the max repeating prompt
             if (promptIterationCount >= chatEntity.getIntentInstance().getMaxRepeatingPrompt() &&
                 promptIteration != null &&
                 promptIteration.getType().equals(request.promptType())) {
@@ -83,9 +87,9 @@ public class ChatService {
             chatEntity.getPromptIterations().add(promptIteration);
         } else {
             boolean hasBeenScored = promptIteration.getMessages().stream()
-                                            .filter(AIMessageEntity.class::isInstance)
-                                            .filter(m -> ((AIMessageEntity) m).getScore() > -1)
-                                            .count() > 0;
+                    .filter(AIMessageEntity.class::isInstance)
+                    .anyMatch(m -> ((AIMessageEntity) m).getScore() >= 0);
+//            If any message in the prompt iteration has been scored
             if (hasBeenScored) {
                 if (promptIterationCount >= chatEntity.getIntentInstance().getMaxRepeatingPrompt()) {
                     setFinalized(chatEntity, true);
@@ -102,6 +106,7 @@ public class ChatService {
                         .findFirst()
                         .orElse(null);
 
+//                Check if the last message is of the same type as the current message
                 if (lastMessage != null) {
                     if (request.getMessageType().equalsIgnoreCase("user") &&
                         lastMessage instanceof UserMessageEntity userMessage) {
@@ -124,18 +129,19 @@ public class ChatService {
 
         promptIteration.getMessages().add(messageEntity);
 
+        // If you try to send an invalid syntax message more than the max errors
         if (request.getMessageType().equalsIgnoreCase("ai") &&
-            request.score() == -1 &&
+            request.score() == MESSAGE_INVALID_SYNTAX_SCORE &&
             promptIteration.getMessages().stream()
                     .filter(AIMessageEntity.class::isInstance)
-                    .filter(m -> ((AIMessageEntity) m).getScore() == -1)
+                    .filter(m -> ((AIMessageEntity) m).getScore() == MESSAGE_INVALID_SYNTAX_SCORE)
                     .count() > chatEntity.getIntentInstance().getMaxErrors()) {
             setFinalized(chatEntity, true);
         }
 
         if (promptIteration.getMessages().stream()
                     .filter(AIMessageEntity.class::isInstance)
-                    .filter(m -> ((AIMessageEntity) m).getScore() != -1)
+                    .filter(m -> ((AIMessageEntity) m).getScore() != MESSAGE_NOT_SET_SCORE)
                     .count() > 1) {
             setFinalized(chatEntity, true);
         }
