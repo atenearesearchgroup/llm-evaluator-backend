@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS model_settings
     model_name        VARCHAR(255)      NULL,
     model_owner       VARCHAR(255)      NULL,
     presence_penalty  FLOAT DEFAULT -1  NULL,
-    system_prompt     VARCHAR(255)      NULL,
+    system_prompt TEXT NULL,
     temperature       FLOAT DEFAULT -1  NULL,
     topp              FLOAT DEFAULT -1  NULL,
     version           VARCHAR(255)      NULL,
