@@ -7,7 +7,7 @@ import ca.mcgill.sel.grading.marks.MissedModelElement;
 import me.loopbreak.hermesanalyzer.objects.grader.ModelError;
 import me.loopbreak.hermesanalyzer.objects.grader.helpers.error.ErrorAdapter;
 
-public class ClassAdapter implements ErrorAdapter {
+public class DataTypeAdapter implements ErrorAdapter {
     @Override
     public ModelError adaptError(MissedModelElement element, ClassDiagram solution) {
         String[] split = element.getMissedElementName().split(" ");

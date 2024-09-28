@@ -1,5 +1,6 @@
 package me.loopbreak.hermesanalyzer.objects.grader.helpers.error;
 
+import ca.mcgill.sel.classdiagram.ClassDiagram;
 import ca.mcgill.sel.grading.marks.MissedModelElement;
 import me.loopbreak.hermesanalyzer.objects.grader.ModelError;
 
@@ -17,7 +18,7 @@ public class ErrorAdapterFactory {
         return instance;
     }
 
-    public ModelError adaptError(String type, MissedModelElement element) {
+    public ModelError adaptError(String type, MissedModelElement element, ClassDiagram solution) {
         ErrorType errorType;
         try {
             errorType = ErrorType.valueOf(type);
@@ -25,7 +26,7 @@ public class ErrorAdapterFactory {
             errorType = ErrorType.DUMMY;
         }
 
-        return errorType.getAdapter().adaptError(element);
+        return errorType.getAdapter().adaptError(element, solution);
     }
 
    /* public ModelError adaptError(String type, MissedModelElement element) {

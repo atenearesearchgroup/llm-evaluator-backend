@@ -73,7 +73,8 @@ public class EvaluatorConnectorImpl implements EvaluatorConnector {
         }
 
         double score = MarksCalculator.of(model).calculateMarks();
-        List<CategoryError> errors = ErrorClassifier.of(model).classify();
+        ClassDiagram solution = classDiagramCache.getUnchecked(solutionFile);
+        List<CategoryError> errors = ErrorClassifier.of(model).solution(solution).classify();
 
         return new EvaluationResult(score, model.getMaxPoints(), errors, null);
     }

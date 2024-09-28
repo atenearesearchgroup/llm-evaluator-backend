@@ -1,5 +1,6 @@
 package me.loopbreak.hermesanalyzer.objects.grader.helpers.error;
 
+import ca.mcgill.sel.classdiagram.ClassDiagram;
 import ca.mcgill.sel.grading.marks.MarksModel;
 import ca.mcgill.sel.grading.marks.MissedModelElement;
 import ca.mcgill.sel.grading.marks.ModelElementCategory;
@@ -12,6 +13,7 @@ import java.util.List;
 public class ErrorClassifier {
 
     private MarksModel marksModel;
+    private ClassDiagram solution = null;
 
     private ErrorClassifier(MarksModel marksModel) {
         this.marksModel = marksModel;
@@ -22,6 +24,9 @@ public class ErrorClassifier {
     }
 
     public List<CategoryError> classify() {
+        if (solution == null)
+            throw new IllegalStateException("Solution not set");
+
         List<CategoryError> categories = new ArrayList<>();
 
         for (ModelElementCategory modelElementCategory : marksModel.getModelElementCategories()) {
@@ -29,7 +34,7 @@ public class ErrorClassifier {
                     .replace(" ", "_"), new ArrayList<>());
 
             for (MissedModelElement missedModelElement : modelElementCategory.getMissedModelElements()) {
-                categoryError.errors().add(adaptError(categoryError.type(), missedModelElement));
+                categoryError.errors().add(adaptError(categoryError.type(), missedModelElement, solution));
             }
 
             if (!categoryError.errors().isEmpty())
@@ -39,8 +44,13 @@ public class ErrorClassifier {
         return categories;
     }
 
-    private ModelError adaptError(String type, MissedModelElement element) {
-        return ErrorAdapterFactory.getInstance().adaptError(type.toUpperCase(), element);
+    private ModelError adaptError(String type, MissedModelElement element, ClassDiagram solution) {
+        return ErrorAdapterFactory.getInstance().adaptError(type.toUpperCase(), element, solution);
+    }
+
+    public ErrorClassifier solution(ClassDiagram solution) {
+        this.solution = solution;
+        return this;
     }
 
  /*   public List<CategoryError> classify() {

@@ -74,7 +74,7 @@ public class MessageController {
         }
 
         EvaluationResult score = evaluator.evaluate(parsedMessage.transformed(), solutionFile);
-        score.withDiagram(parsedMessage.plantUmlCode());
+        score = score.withDiagram(parsedMessage.plantUmlCode());
 
         return score;
     }

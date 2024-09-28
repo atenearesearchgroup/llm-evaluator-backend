@@ -9,18 +9,17 @@ import org.jetbrains.annotations.Nullable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class AssociationAdapter implements ErrorAdapter {
+public class AssociationEndsAdapter implements ErrorAdapter {
     //    association Car_Service from Car to Service
-    private static final String MISSING_ASSOC_REGEX = ".*\\s(\\w+\\.\\w+)\\s<->\\s(\\w+\\.\\w+).*";
+    private static final String MISSING_ASSOC_REGEX = "(\\w+\\.\\w+)\\s.*";
 
-    //"Car_Service: Service.myCar <-> Car.services (lost 2.0 points)"
+    //"Car.services (lost 1.0 points)"
     @Nullable
     private String[] getMissingAssociationElements(String content) {
         Matcher matcher = Pattern.compile(MISSING_ASSOC_REGEX).matcher(content);
         if (matcher.find()) {
-            String[] firstSplit = matcher.group(1).split("\\.");
-            String[] secondSplit = matcher.group(2).split("\\.");
-            return new String[]{firstSplit[0], firstSplit[1], secondSplit[0], secondSplit[1]};
+            String[] split = matcher.group(1).split("\\.");
+            return new String[]{split[0], split[1]};
         }
         return null;
     }
