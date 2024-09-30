@@ -11,7 +11,6 @@ public interface FormatConnector {
         String plantUmlCode = response;
 
         plantUmlCode = PlantParser.getPlantUML(plantUmlCode);
-//        todo: check if we need @startuml and @enduml
 
         return transform(plantUmlCode);
     }
