@@ -1,36 +1,29 @@
 package me.loopbreak.hermesanalyzer.objects.platform.providers;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import me.loopbreak.hermesanalyzer.exceptions.ModelConnectionException;
 import me.loopbreak.hermesanalyzer.objects.models.Model;
 import me.loopbreak.hermesanalyzer.objects.models.ModelImpl;
 import me.loopbreak.hermesanalyzer.objects.models.ModelSettings;
 import me.loopbreak.hermesanalyzer.objects.platform.Platform;
 import me.loopbreak.hermesanalyzer.objects.platform.connectors.ollama.OllamaExtraConnector;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import me.loopbreak.hermesanalyzer.services.configuration.OllamaProviderService;
 import org.springframework.ai.chat.ChatClient;
 import org.springframework.ai.ollama.OllamaChatClient;
 import org.springframework.ai.ollama.api.OllamaApi;
 import org.springframework.ai.ollama.api.OllamaOptions;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.util.StreamUtils;
-import org.springframework.web.client.ResponseErrorHandler;
-import org.springframework.web.client.RestClient;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+@Component
 public class OllamaProvider implements Platform {
 
-    private OllamaApi ollamaApi = new OllamaApi();
+    private OllamaApi ollamaApi;
     private OllamaExtraConnector ollamaExtraConnector = OllamaExtraConnector.getInstance();
 
-    public OllamaProvider() {
+    @Autowired
+    public OllamaProvider(OllamaProviderService ollamaProviderService) {
+        this.ollamaApi = ollamaProviderService.getApi();
     }
 
     @Override

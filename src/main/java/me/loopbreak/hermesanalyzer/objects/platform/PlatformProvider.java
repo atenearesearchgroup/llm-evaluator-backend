@@ -1,31 +1,39 @@
 package me.loopbreak.hermesanalyzer.objects.platform;
 
 import me.loopbreak.hermesanalyzer.exceptions.PlatformNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+@Service
 public class PlatformProvider {
 
-    private static Map<String, Platform> registry = getDefaults();
+    private final Map<String, Platform> registry = new HashMap<>();
 
-    private static Map<String, Platform> getDefaults() {
-        Map<String, Platform> defaults = new HashMap<>();
+    @Autowired
+    public PlatformProvider(List<Platform> platforms) {
+        loadDefaults(platforms);
+    }
 
-        for (DefaultPlatforms value : DefaultPlatforms.values()) {
+    private void loadDefaults(List<Platform> platforms) {
+        registry.clear();
+
+        for (Platform platform : platforms) {
             try {
-                defaults.put(value.name().toLowerCase(), value.getPlatform());
+                registry.put(platform.getName().toLowerCase(), platform);
             } catch (Exception exception) {
-                System.out.println("Failed to register default platform " + value.name());
+                System.out.println("Failed to register default platform " + platform.getName());
                 exception.printStackTrace();
             }
         }
-
-        return defaults;
     }
 
-    public static void registerPlatform(String name, Platform platform) {
+
+    public void registerPlatform(String name, Platform platform) {
         name = name.toLowerCase();
 
         if (registry.containsKey(name)) {
@@ -35,7 +43,7 @@ public class PlatformProvider {
         registry.put(name, platform);
     }
 
-    public static Platform getProvider(String identifier) {
+    public Platform getProvider(String identifier) {
         String lowerCase = identifier.toLowerCase();
         if (!registry.containsKey(lowerCase)) {
             throw new PlatformNotFoundException(identifier);
@@ -44,11 +52,11 @@ public class PlatformProvider {
         return registry.get(lowerCase);
     }
 
-    public static Platform getProvider(DefaultPlatforms platform) {
+    public Platform getProvider(DefaultPlatforms platform) {
         return getProvider(platform.name().toLowerCase());
     }
 
-    public static <T extends Platform> T getProvider(@Nonnull Class<T> clazz) {
+    public <T extends Platform> T getProvider(@Nonnull Class<T> clazz) {
         for (Platform platform : registry.values()) {
             if (clazz.isInstance(platform)) {
                 return clazz.cast(platform);

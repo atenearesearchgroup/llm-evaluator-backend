@@ -1,24 +1,28 @@
 package me.loopbreak.hermesanalyzer.objects.platform.providers;
 
-import me.loopbreak.hermesanalyzer.services.configuration.OpenAIProviderService;
 import me.loopbreak.hermesanalyzer.objects.models.Model;
 import me.loopbreak.hermesanalyzer.objects.models.ModelImpl;
 import me.loopbreak.hermesanalyzer.objects.models.ModelSettings;
 import me.loopbreak.hermesanalyzer.objects.platform.Platform;
+import me.loopbreak.hermesanalyzer.services.configuration.OpenAIProviderService;
 import org.springframework.ai.chat.ChatClient;
 import org.springframework.ai.openai.OpenAiChatClient;
 import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.ai.openai.api.OpenAiApi;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.List;
 
+@Component
 public class OpenAIProvider implements Platform {
 
     private OpenAiApi openAiApi;
 
-    public OpenAIProvider() {
-        this.openAiApi = OpenAIProviderService.getInstance().getApi();
+    @Autowired
+    public OpenAIProvider(OpenAIProviderService openAIProviderService) {
+        this.openAiApi = openAIProviderService.getApi();
     }
 
     @Override

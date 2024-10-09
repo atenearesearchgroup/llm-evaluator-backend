@@ -8,12 +8,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class MistralAIProviderService extends AbstractProviderService<MistralAiProperties, MistralAiApi> {
 
-    private static MistralAIProviderService instance;
-
     @Autowired
     public MistralAIProviderService(MistralAiProperties options) {
         super(options);
-        instance = this;
     }
 
     @Override
@@ -21,11 +18,4 @@ public class MistralAIProviderService extends AbstractProviderService<MistralAiP
         return new MistralAiApi(getOptions().getApiKey());
     }
 
-    public static MistralAIProviderService getInstance() {
-        if (instance == null) {
-            System.out.println("MistralAIProviderService instance is null");
-        }
-        return instance;
-//        return BeanUtils.instantiateClass(MistralAIProviderService.class);
-    }
 }

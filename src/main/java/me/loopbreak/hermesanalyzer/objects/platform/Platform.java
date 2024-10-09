@@ -15,4 +15,9 @@ public interface Platform {
     }
 
     List<String> getAvailableModels();
+
+    default String getName() {
+        String simpleName = this.getClass().getSimpleName();
+        return simpleName.substring(0, simpleName.indexOf("Provider"));
+    }
 }

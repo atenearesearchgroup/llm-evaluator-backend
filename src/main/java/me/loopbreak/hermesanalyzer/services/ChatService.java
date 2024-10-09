@@ -35,14 +35,20 @@ public class ChatService {
     private final AiMessageRepository aiMessageRepository;
     private final UserMessageRepository userMessageRepository;
     private final InstanceService instanceService;
+    private final PlatformProvider platformProvider;
 
     public ChatService(ChatEntityRepository chatEntityRepository,
-                       PromptIterationEntityRepository promptIterationEntityRepository, AiMessageRepository aiMessageRepository, UserMessageRepository userMessageRepository, InstanceService instanceService) {
+                       PromptIterationEntityRepository promptIterationEntityRepository,
+                       AiMessageRepository aiMessageRepository,
+                       UserMessageRepository userMessageRepository,
+                       InstanceService instanceService,
+                       PlatformProvider platformProvider) {
         this.chatEntityRepository = chatEntityRepository;
         this.promptIterationEntityRepository = promptIterationEntityRepository;
         this.aiMessageRepository = aiMessageRepository;
         this.userMessageRepository = userMessageRepository;
         this.instanceService = instanceService;
+        this.platformProvider = platformProvider;
     }
 
     public ChatEntity getChat(Long chat) {
@@ -152,7 +158,7 @@ public class ChatService {
     public String generateMessage(ChatEntity chatEntity) {
         IntentInstanceEntity intentInstance = chatEntity.getIntentInstance();
         ModelSettingsEntity modelSettings = intentInstance.getModelSettings();
-        Platform platform = PlatformProvider.getProvider(intentInstance.getPlatform());
+        Platform platform = platformProvider.getProvider(intentInstance.getPlatform());
 
         if (platform == null)
             throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "Platform not found");
@@ -175,8 +181,11 @@ public class ChatService {
         if (lastMessage == null || lastMessage instanceof AIMessageEntity)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No user message found");
 
-        AIMessage message = model.send(chatEntity.toDraft()).join();
-
-        return message.getContent();
+        try {
+            AIMessage message = model.send(chatEntity.toDraft()).join();
+            return message.getContent();
+        } catch (Exception exception) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to generate message", exception);
+        }
     }
 }

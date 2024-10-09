@@ -1,24 +1,28 @@
 package me.loopbreak.hermesanalyzer.objects.platform.providers;
 
-import me.loopbreak.hermesanalyzer.services.configuration.MistralAIProviderService;
 import me.loopbreak.hermesanalyzer.objects.models.Model;
 import me.loopbreak.hermesanalyzer.objects.models.ModelImpl;
 import me.loopbreak.hermesanalyzer.objects.models.ModelSettings;
 import me.loopbreak.hermesanalyzer.objects.platform.Platform;
+import me.loopbreak.hermesanalyzer.services.configuration.MistralAIProviderService;
 import org.springframework.ai.chat.ChatClient;
 import org.springframework.ai.mistralai.MistralAiChatClient;
 import org.springframework.ai.mistralai.MistralAiChatOptions;
 import org.springframework.ai.mistralai.api.MistralAiApi;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.List;
 
+@Component
 public class MistralProvider implements Platform {
 
     private MistralAiApi mistralAiApi;
 
-    public MistralProvider() {
-        this.mistralAiApi = MistralAIProviderService.getInstance().getApi();
+    @Autowired
+    public MistralProvider(MistralAIProviderService providerService) {
+        this.mistralAiApi = providerService.getApi();
     }
 
     @Override
