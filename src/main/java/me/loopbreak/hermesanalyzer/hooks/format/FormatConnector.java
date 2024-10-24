@@ -7,7 +7,7 @@ import java.io.InputStream;
 
 public interface FormatConnector {
 
-    default FormattedUml parse(@NotNull String response) {
+    default FormattedUml parseTransform(@NotNull String response) throws SyntaxException {
         String plantUmlCode = response;
 
         plantUmlCode = PlantParser.getPlantUML(plantUmlCode);
@@ -15,7 +15,7 @@ public interface FormatConnector {
         return transform(plantUmlCode);
     }
 
-    FormattedUml transform(@NotNull String plantUmlCode);
+    FormattedUml transform(@NotNull String plantUmlCode) throws SyntaxException;
 
     public record FormattedUml(InputStream transformed, String plantUmlCode) {
 

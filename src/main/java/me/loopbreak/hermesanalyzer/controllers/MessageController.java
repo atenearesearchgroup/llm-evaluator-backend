@@ -3,6 +3,7 @@ package me.loopbreak.hermesanalyzer.controllers;
 import me.loopbreak.hermesanalyzer.entity.messages.AIMessageEntity;
 import me.loopbreak.hermesanalyzer.hooks.format.FormatConnector;
 import me.loopbreak.hermesanalyzer.hooks.format.FormatConnectorImpl;
+import me.loopbreak.hermesanalyzer.hooks.format.SyntaxException;
 import me.loopbreak.hermesanalyzer.hooks.grader.EvaluatorConnector;
 import me.loopbreak.hermesanalyzer.hooks.grader.EvaluatorConnectorImpl;
 import me.loopbreak.hermesanalyzer.objects.grader.EvaluationResult;
@@ -14,6 +15,9 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static me.loopbreak.hermesanalyzer.services.ChatService.MESSAGE_INVALID_SYNTAX_SCORE;
@@ -60,22 +64,55 @@ public class MessageController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Message not found");
 
         String modelId = message.getPromptIteration().getChat().getIntentInstance().getIntentModel().getModelName();
-        Path solutionFile = FileController.UPLOADS_DIR.resolve(modelId).resolve(modelId + ".domain_model.cdm");
+        Path solutionFile = null;
+        try {
+            solutionFile = getSolutionPath(modelId);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while reading solution file");
+        } catch (SyntaxException e) {
+            e.printStackTrace();
+
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The given solution model syntax is not valid");
+        }
 
         FormatConnector.FormattedUml parsedMessage;
         try {
-            parsedMessage = formatConnector.parse(message.getContent());
-        } catch (Exception e) {
+            parsedMessage = formatConnector.parseTransform(message.getContent());
+        } catch (SyntaxException e) {
+            if (e.getErrors().isEmpty()) {
+                e.getException().printStackTrace();
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "There was an error while changing the diagram format");
+            }
+
+            System.out.println("e.getErrors() = " + e.getErrors());
+
             /**
              * If the message is not a valid plantUML code, return {@link MESSAGE_INVALID_SYNTAX_SCORE} as score
              */
             EvaluationResult maxScore = evaluator.evaluate(null, solutionFile);
-            return new EvaluationResult(MESSAGE_INVALID_SYNTAX_SCORE, maxScore.maxScore(), null, null);
+            return new EvaluationResult(MESSAGE_INVALID_SYNTAX_SCORE, maxScore.maxScore(), null, e.getErrors(), null);
         }
 
         EvaluationResult score = evaluator.evaluate(parsedMessage.transformed(), solutionFile);
         score = score.withDiagram(parsedMessage.plantUmlCode());
 
         return score;
+    }
+
+    private Path getSolutionPath(String modelId) throws IOException, SyntaxException {
+        Path solutionFile = FileController.UPLOADS_DIR.resolve(modelId).resolve(modelId + ".domain_model.cdm");
+
+        if (Files.exists(solutionFile)) return solutionFile;
+
+        Path pumlFile = FileController.UPLOADS_DIR.resolve(modelId).resolve(modelId + ".puml");
+
+        if (!Files.exists(pumlFile)) return solutionFile;
+
+        InputStream content = formatConnector.transform(Files.readString(pumlFile))
+                .transformed();
+        Files.write(solutionFile, content.readAllBytes());
+
+        return solutionFile;
     }
 }
