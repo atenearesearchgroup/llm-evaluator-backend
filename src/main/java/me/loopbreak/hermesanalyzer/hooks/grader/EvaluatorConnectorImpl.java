@@ -22,7 +22,6 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -31,7 +30,6 @@ import static ca.mcgill.sel.grading.classdiagram.ClassdiagramGrader.initializeSo
 
 public class EvaluatorConnectorImpl implements EvaluatorConnector {
 
-    private static final EvaluationResult DEFAULT_RESULT = new EvaluationResult(0.0, 0.0, new ArrayList<>(), null);
     private static final String DOT = ".";
     private static final String UML_SUFFIX = ".uml";
 
@@ -76,7 +74,7 @@ public class EvaluatorConnectorImpl implements EvaluatorConnector {
         ClassDiagram solution = classDiagramCache.getUnchecked(solutionFile);
         List<CategoryError> errors = ErrorClassifier.of(model).solution(solution).classify();
 
-        return new EvaluationResult(score, model.getMaxPoints(), errors, null);
+        return new EvaluationResult(score, model.getMaxPoints(), errors, null, null);
     }
 
     @Nullable
@@ -103,7 +101,8 @@ public class EvaluatorConnectorImpl implements EvaluatorConnector {
 
         ClassDiagram attempt = classDiagramCache.getUnchecked(attemptFile);
 
-        return ClassdiagramGraderAlgorithm.gradeClassdiagram(solution, solutionMarks, attempt);
+        MarksModel result = ClassdiagramGraderAlgorithm.gradeClassdiagram(solution, solutionMarks, attempt);
+        return result;
     }
 
     @NotNull
@@ -134,6 +133,11 @@ public class EvaluatorConnectorImpl implements EvaluatorConnector {
         ClassdiagramGrader.initializeCdm();
         ClassdiagramGrader.initializeMarks();
         isInitialized = true;
+    }
+
+    private static MarksModel getLocalModel(Path file) {
+        MarksModel solutionMarks = (MarksModel) ResourceManager.loadModel(file.toFile());
+        return solutionMarks;
     }
 
 

@@ -16,7 +16,7 @@ import java.util.List;
 public class DummyConnectorImpl implements EvaluatorConnector {
 
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    private static final EvaluationResult DEFAULT_RESULT = new EvaluationResult(0.0, 0.0, List.of(), null);
+    private static final EvaluationResult DEFAULT_RESULT = new EvaluationResult(0.0, 0.0, List.of(), null, null);
 
     @Override
     public EvaluationResult evaluate(InputStream text, Path solutionFile) {
@@ -33,7 +33,7 @@ public class DummyConnectorImpl implements EvaluatorConnector {
 //        List<CategoryError> errors = model.getErrorClassifier().classify();
         List<CategoryError> errors = List.of();
 
-        EvaluationResult result = new EvaluationResult(score, model.getMaxPoints(), errors, null);
+        EvaluationResult result = new EvaluationResult(score, model.getMaxPoints(), errors, null, null);
 
         return result;
     }

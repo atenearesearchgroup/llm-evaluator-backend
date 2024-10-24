@@ -16,12 +16,12 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.UUID;
 
 public class FormatConnectorImpl implements FormatConnector {
 
-    public FormattedUml transform(@NotNull String plantUmlCode) {
-//        TextToPumlModel textToPumlMapper = new TextToPumlModel(args[0]);
+    public FormattedUml transform(@NotNull String plantUmlCode) throws SyntaxException {
         try {
             UUID uuid = UUID.randomUUID();
             String filePath = "cache/%s.cdm".formatted(uuid);
@@ -37,15 +37,15 @@ public class FormatConnectorImpl implements FormatConnector {
 
             Files.deleteIfExists(Path.of(filePath));
             return new FormattedUml(new ByteArrayInputStream(content), plantUmlCode);
-//            InputStream inputStream = new FileInputStream("studentCORE.cdm");
-
-//            return fstream;
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            if (e.getMessage().contains("Invalid Type"))
+                throw new SyntaxException(Collections.singletonList(e.getMessage()));
+
+            throw new SyntaxException(e);
         }
     }
 
-    private PumlModel map(String text) throws IOException {
+    private PumlModel map(String text) throws IOException, SyntaxException {
         BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8))));
 
         ANTLRInputStream input = new ANTLRInputStream(br);
@@ -56,17 +56,13 @@ public class FormatConnectorImpl implements FormatConnector {
         SemanticErrorReporter errorReporter = new SemanticErrorReporter();
         PumlValidation errorCheck = new PumlValidation(errorReporter);
         errorCheck.visit(tree);
-        if (errorReporter.getErrors().size() <= 0) {
-            PumlBuilderPlantumlVisitor eval = new PumlBuilderPlantumlVisitor();
-            eval.visit(tree);
-            return eval.getModel();
-        } else {
-            for (int i = 0; i < errorReporter.getErrors().size(); ++i) {
-                System.out.printf("[%d] %s%n", i + 1, errorReporter.getErrors().get(i));
-            }
 
-            throw new IOException();
-        }
+        if (!errorReporter.getErrors().isEmpty())
+            throw new SyntaxException(errorReporter.getErrors());
+
+        PumlBuilderPlantumlVisitor eval = new PumlBuilderPlantumlVisitor();
+        eval.visit(tree);
+        return eval.getModel();
     }
 
 
