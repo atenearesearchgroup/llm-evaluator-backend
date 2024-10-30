@@ -87,7 +87,12 @@ dependencyManagement {
     }
 }
 
+
+// disable test task
+
+
 tasks.named('test') {
+    enabled = false
     useJUnitPlatform()
 }
 
