@@ -41,11 +41,13 @@ ext {
 }
 
 dependencies {
-    compileOnly 'ca.mcgill.sel:common-dependencies:1.0'
-//    implementation files('libs/PumlToCore-1.0-SNAPSHOT.jar')
-    implementation 'edu.atenearesearchgroup:PumlToCore:1.0-SNAPSHOT'
-//exclude commons-logging
-    implementation files('libs/ClassdiagramGrader-jar-with-dependencies.jar')
+    implementation files('libs/PumlToCore-1.0-SNAPSHOT.jar')
+
+    implementation files('libs/ClassdiagramGrader-jar-with-dependencies.jar') {
+        filter {
+            exclude 'org/slf4j/**'
+        }
+    }
 
     implementation('org.antlr:antlr4-runtime:4.5') {
         version {
