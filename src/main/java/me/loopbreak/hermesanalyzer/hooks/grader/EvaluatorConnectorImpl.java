@@ -3,7 +3,6 @@ package me.loopbreak.hermesanalyzer.hooks.grader;
 import ca.mcgill.sel.classdiagram.ClassDiagram;
 import ca.mcgill.sel.classdiagram.uml2cdm.Uml2CdmConverter;
 import ca.mcgill.sel.commons.emf.util.ResourceManager;
-import ca.mcgill.sel.grading.classdiagram.ClassdiagramGrader;
 import ca.mcgill.sel.grading.classdiagram.ClassdiagramGraderAlgorithm;
 import ca.mcgill.sel.grading.marks.MarksModel;
 import com.google.common.cache.CacheBuilder;
@@ -129,9 +128,9 @@ public class EvaluatorConnectorImpl implements EvaluatorConnector {
             return;
         }
 
-        ClassdiagramGrader.initializeEMF();
-        ClassdiagramGrader.initializeCdm();
-        ClassdiagramGrader.initializeMarks();
+//        ClassdiagramGrader.initializeEMF();
+//        ClassdiagramGrader.initializeCdm();
+//        ClassdiagramGrader.initializeMarks();
         isInitialized = true;
     }
 
