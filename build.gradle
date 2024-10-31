@@ -16,7 +16,7 @@ plugins {
 }
 
 group = 'me.loopbreak'
-version = '0.0.1-SNAPSHOT'
+version = '1.9.0-beta'
 
 java {
     sourceCompatibility = '17'
