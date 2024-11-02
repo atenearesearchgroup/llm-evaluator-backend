@@ -8,40 +8,50 @@ import me.loopbreak.hermesanalyzer.objects.models.Model;
 import me.loopbreak.hermesanalyzer.objects.models.ModelSettings;
 import me.loopbreak.hermesanalyzer.objects.platform.DefaultPlatforms;
 import me.loopbreak.hermesanalyzer.objects.platform.PlatformProvider;
-import me.loopbreak.hermesanalyzer.services.configuration.ReplicateProviderService;
+import me.loopbreak.hermesanalyzer.services.configuration.OpenAIProviderService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.concurrent.CompletableFuture;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@ConfigurationPropertiesScan
 @SpringBootTest
 @Disabled
-@Tag("replicate")
-class ReplicateProviderTest {
+//@Disabled
+class OpenAIProviderTest {
 
-    @Autowired
-    private ReplicateProviderService replicateProviderService;
-    private ReplicateProvider replicateProvider;
+    //    @Autowired
+//    @Autowired
+//    private ApplicationContext context;
+    private OpenAIProvider provider;
     private Model model;
+    @Autowired
+    private OpenAIProviderService openAIProviderService;
     @Autowired
     private PlatformProvider platformProvider;
 
     @BeforeEach
     void setUp() {
-        replicateProvider = (ReplicateProvider) platformProvider.getProvider(DefaultPlatforms.REPLICATE);
+
+//        ApplicationContext context = ApplicationContextProvider.getApplicationContext();
+//        openAIProviderService = context.getBean(OpenAIProviderService.class);
+//        provider = new OpenAIProvider(openAIProviderService);
+        provider = (OpenAIProvider) platformProvider.getProvider(DefaultPlatforms.OPENAI);
+
+//        provider = (OpenAIProvider) PlatformProvider.getProvider(DefaultPlatforms.OPENAI);
 //        replicateProvider = new ReplicateProvider(replicateProviderService.getApi());
         ModelSettings settings = ModelSettings.builder()
-                .modelName("meta-llama-3-70b-instruct")
-                .modelOwner("meta")
+                .modelName("gpt-4o-mini")
+//                .modelOwner("meta")
                 .systemPrompt("You are a helpful modeling assistant. You use PlantUML notation. You have a deep knowledge about class diagrams and deep understanding of system requirements. Stick to what is defined in the instructions.")
                 .build();
-        model = replicateProvider.getModel(settings);
+        model = provider.getModel(settings);
     }
 
     @Test
@@ -57,8 +67,7 @@ class ReplicateProviderTest {
 
         AIMessage aimessage = response.join();
 
-        System.out.println("aimessage.getContent() = " + aimessage.getContent());
-//        aimessage.getOutputDiagram()
+        System.out.println("aimessage = " + aimessage.getContent());
 
         assertThat(aimessage.getContent()).isNotEmpty();
     }

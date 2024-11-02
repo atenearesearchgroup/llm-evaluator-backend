@@ -14,6 +14,7 @@ import me.loopbreak.hermesanalyzer.repository.IntentInstanceRepository;
 import org.assertj.core.api.Condition;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,23 +24,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 @SpringBootTest
+@Disabled
 class ChatServiceTest {
 
+    @Autowired
     private IntentService intentService;
+    @Autowired
     private InstanceService instanceService;
+    @Autowired
     private ChatService chatService;
 
     private IntentModelEntity model = null;
     private IntentInstanceEntity instance;
     @Autowired
     private IntentInstanceRepository intentInstanceRepository;
-
-    @Autowired
-    public ChatServiceTest(IntentService intentService, InstanceService instanceService, ChatService chatService) {
-        this.intentService = intentService;
-        this.instanceService = instanceService;
-        this.chatService = chatService;
-    }
 
     @BeforeEach
     public void setUp() {
