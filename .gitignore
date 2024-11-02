@@ -6,6 +6,8 @@ build/
 !**/src/test/**/build/
 
 /libs/
+/uploads/
+/cache/
 
 ### STS ###
 .apt_generated

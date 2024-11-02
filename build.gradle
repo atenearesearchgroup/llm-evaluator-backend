@@ -16,7 +16,7 @@ plugins {
 }
 
 group = 'me.loopbreak'
-version = '1.9.0-beta'
+version = '1.9.0-SNAPSHOT'
 
 java {
     sourceCompatibility = '17'
@@ -106,5 +106,5 @@ tasks.named('test') {
 //tasks.named('shadowJar', ShadowJar) {
 //    minimize()
 //    enableRelocation true
-//    relocationPrefix "me.loopbreak.firetags.libs"
+//    relocationPrefix "me.loopbreak.hermesanalyzer.libs"
 //}
