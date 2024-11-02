@@ -47,7 +47,7 @@ public class DummyConnectorImpl implements EvaluatorConnector {
             return sampleModel;
         }
 
-        InputStream inputStream = EvaluatorSample.class.getResourceAsStream("/evaluation_sample.json");
+        InputStream inputStream = DummyConnectorImpl.class.getResourceAsStream("/evaluation_sample.json");
 
         if (inputStream == null) {
             System.out.println("Input stream is null");
