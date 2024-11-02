@@ -5,10 +5,14 @@ import ca.mcgill.sel.grading.marks.MarksModel;
 import ca.mcgill.sel.grading.marks.MissedModelElement;
 import ca.mcgill.sel.grading.marks.ModelElementCategory;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 public class MarksCalculator {
 
-    private MarksModel marksModel;
+    private final MarksModel marksModel;
+    private final Map<String, Double> commentMap = new HashMap<>();
 
     private MarksCalculator(MarksModel marksModel) {
         this.marksModel = marksModel;
@@ -35,7 +39,13 @@ public class MarksCalculator {
 //                if (markValueMap.containsKey(markId)) {
 //                    totalSum += markValueMap.get(markId);
 //                }
-                totalSum += markId.getPoints();
+                double oldPoints = commentMap.getOrDefault(markId.getComment(), 0.0);
+
+                if (oldPoints >= markId.getPoints()) continue;
+
+                commentMap.put(markId.getComment(), markId.getPoints());
+
+                totalSum += markId.getPoints() - oldPoints;
             }
             for (MissedModelElement missedModelElement : category.getMissedModelElements()) {
                 Mark compensationMark = missedModelElement.getCompensationMark();
@@ -44,6 +54,7 @@ public class MarksCalculator {
 
                 totalSum += compensationMark.getPoints();
             }
+            commentMap.clear();
         }
 
         return totalSum;
