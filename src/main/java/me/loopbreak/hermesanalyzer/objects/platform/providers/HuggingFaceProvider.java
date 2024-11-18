@@ -1,11 +1,11 @@
 package me.loopbreak.hermesanalyzer.objects.platform.providers;
 
-import me.loopbreak.hermesanalyzer.services.configuration.HuggingFaceProviderService;
 import me.loopbreak.hermesanalyzer.objects.models.Model;
 import me.loopbreak.hermesanalyzer.objects.models.ModelImpl;
 import me.loopbreak.hermesanalyzer.objects.models.ModelSettings;
 import me.loopbreak.hermesanalyzer.objects.platform.Platform;
 import me.loopbreak.hermesanalyzer.objects.platform.connectors.huggingface.HuggingfaceProperties;
+import me.loopbreak.hermesanalyzer.services.configuration.HuggingFaceProviderService;
 import org.springframework.ai.chat.ChatClient;
 import org.springframework.ai.huggingface.HuggingfaceChatClient;
 

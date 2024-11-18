@@ -24,7 +24,7 @@ public class VertexAIProviderService extends AbstractProviderService<VertexConne
     @Override
     public VertexAI getApi() {
         Resource resource = getOptions().getCredentialsUri();
-        if(resource == null) {
+        if (resource == null) {
             return new VertexAI(getOptions().getProjectId(), getOptions().getLocation());
         }
         Credentials credentials = null;
@@ -35,7 +35,7 @@ public class VertexAIProviderService extends AbstractProviderService<VertexConne
             throw new RuntimeException(e);
         }
 
-        return new VertexAI(getOptions().getProjectId(),getOptions().getLocation(),credentials);
+        return new VertexAI(getOptions().getProjectId(), getOptions().getLocation(), credentials);
     }
 
     public static VertexAIProviderService getInstance() {

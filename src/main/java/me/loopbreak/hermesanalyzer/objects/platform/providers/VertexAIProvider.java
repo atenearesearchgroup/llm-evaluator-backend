@@ -1,11 +1,11 @@
 package me.loopbreak.hermesanalyzer.objects.platform.providers;
 
 import com.google.cloud.vertexai.VertexAI;
-import me.loopbreak.hermesanalyzer.services.configuration.VertexAIProviderService;
 import me.loopbreak.hermesanalyzer.objects.models.Model;
 import me.loopbreak.hermesanalyzer.objects.models.ModelImpl;
 import me.loopbreak.hermesanalyzer.objects.models.ModelSettings;
 import me.loopbreak.hermesanalyzer.objects.platform.Platform;
+import me.loopbreak.hermesanalyzer.services.configuration.VertexAIProviderService;
 import org.springframework.ai.chat.ChatClient;
 import org.springframework.ai.openai.api.OpenAiApi;
 import org.springframework.ai.vertexai.gemini.VertexAiGeminiChatClient;

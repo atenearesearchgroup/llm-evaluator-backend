@@ -131,10 +131,10 @@ public class ReplicateApi {
         if (response.status().isDone() && response.status() != PredictionStatus.succeeded)
             throw new ModelConnectionException(String.format("Model failed, there is some error (status: %s)", response.status()));
 
-        if(!response.status().isDone())
+        if (!response.status().isDone())
             return null;
 
-        if(response.output() == null) {
+        if (response.output() == null) {
             throw new ModelConnectionException("Model output is null??");
         }
 

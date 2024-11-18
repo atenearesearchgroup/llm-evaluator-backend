@@ -10,10 +10,10 @@ public class ModelSettings implements ModelSettingsLike {
     //    replicate version identifies the model itself
     private String version;
     private String systemPrompt;
-    private int maxTokens= -1;
+    private int maxTokens = -1;
     private float temperature = -1;
     private float topP = -1;
-//    private float repetitionPenalty;
+    //    private float repetitionPenalty;
     private float frequencyPenalty = -1;
     private float presencePenalty = -1;
 
