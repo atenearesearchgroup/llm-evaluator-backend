@@ -3,10 +3,7 @@ package me.loopbreak.hermesanalyzer.objects.grader.helpers;
 import ca.mcgill.sel.classdiagram.Association;
 import ca.mcgill.sel.classdiagram.AssociationEnd;
 import ca.mcgill.sel.classdiagram.ClassDiagram;
-import ca.mcgill.sel.grading.marks.Mark;
-import ca.mcgill.sel.grading.marks.MarksModel;
-import ca.mcgill.sel.grading.marks.MissedModelElement;
-import ca.mcgill.sel.grading.marks.ModelElementCategory;
+import ca.mcgill.sel.grading.marks.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -58,10 +55,11 @@ public class MarksCalculator {
         for (ModelElementCategory category : marksModel.getModelElementCategories()) {
             // Sum the points for each mark id in the category's marks list
             for (Mark markId : category.getMarks()) {
-                PriorityQueue<Double> oldPoints = commentMap.computeIfAbsent(markId.getComment(), k -> new PriorityQueue<>());
+                String comment = adjustComment(markId);
+                PriorityQueue<Double> oldPoints = commentMap.computeIfAbsent(comment, k -> new PriorityQueue<>());
                 double points = markId.getPoints();
 
-                if (oldPoints.size() < duplicatedElements.getOrDefault(markId.getComment(), 1)) {
+                if (oldPoints.size() < duplicatedElements.getOrDefault(comment, 1)) {
                     oldPoints.add(points);
                     totalSum += points;
                     continue;
@@ -88,6 +86,15 @@ public class MarksCalculator {
         }
 
         return totalSum;
+    }
+
+    private String adjustComment(Mark mark) {
+        if (!(mark.eContainer() instanceof FeatureMark featureMark)) return mark.getComment();
+
+        String comment = mark.getComment();
+        if (!comment.equalsIgnoreCase("Full marks")) return comment;
+
+        return "Full marks " + featureMark.getReferencedObjectName();
     }
 }
 
