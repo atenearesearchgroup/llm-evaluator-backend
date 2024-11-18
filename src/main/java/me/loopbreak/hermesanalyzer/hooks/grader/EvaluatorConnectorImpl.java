@@ -70,8 +70,8 @@ public class EvaluatorConnectorImpl implements EvaluatorConnector {
             throw new RuntimeException(e);
         }
 
-        double score = MarksCalculator.of(model).calculateMarks();
         ClassDiagram solution = classDiagramCache.getUnchecked(solutionFile);
+        double score = MarksCalculator.of(model).withSolution(solution).calculateMarks();
         List<CategoryError> errors = ErrorClassifier.of(model).solution(solution).classify();
 
         return new EvaluationResult(score, model.getMaxPoints(), errors, null, null);
@@ -94,7 +94,7 @@ public class EvaluatorConnectorImpl implements EvaluatorConnector {
         MarksModel solutionMarks = emptyMarksModelCache.getUnchecked(solution);
 
         if (attemptFile == null) {
-            double maxScore = MarksCalculator.of(solutionMarks).calculateMarks();
+            double maxScore = MarksCalculator.of(solutionMarks).withSolution(solution).calculateMarks();
             solutionMarks.setMaxPoints(maxScore);
             return solutionMarks;
         }

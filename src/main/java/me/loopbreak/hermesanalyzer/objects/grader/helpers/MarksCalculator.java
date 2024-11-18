@@ -1,5 +1,8 @@
 package me.loopbreak.hermesanalyzer.objects.grader.helpers;
 
+import ca.mcgill.sel.classdiagram.Association;
+import ca.mcgill.sel.classdiagram.AssociationEnd;
+import ca.mcgill.sel.classdiagram.ClassDiagram;
 import ca.mcgill.sel.grading.marks.Mark;
 import ca.mcgill.sel.grading.marks.MarksModel;
 import ca.mcgill.sel.grading.marks.MissedModelElement;
@@ -7,12 +10,15 @@ import ca.mcgill.sel.grading.marks.ModelElementCategory;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.PriorityQueue;
 
 
 public class MarksCalculator {
 
     private final MarksModel marksModel;
-    private final Map<String, Double> commentMap = new HashMap<>();
+    private ClassDiagram solutionModel = null;
+    private final Map<String, PriorityQueue<Double>> commentMap = new HashMap<>();
+    private final Map<String, Integer> duplicatedElements = new HashMap<>();
 
     private MarksCalculator(MarksModel marksModel) {
         this.marksModel = marksModel;
@@ -22,13 +28,29 @@ public class MarksCalculator {
         return new MarksCalculator(marksModel);
     }
 
+    public MarksCalculator withSolution(ClassDiagram marksModel) {
+        this.solutionModel = marksModel;
+        duplicatedNumber();
+        return this;
+    }
+
+    private void duplicatedNumber() {
+        duplicatedElements.clear();
+        if (solutionModel == null) return;
+
+        for (Association association : solutionModel.getAssociations()) {
+            for (AssociationEnd end : association.getEnds()) {
+                String comment = "Equivalent to solution association end " + end.getClassifier().getName() + "." + end.getName() + ".";
+                duplicatedElements.merge(comment, 1, Integer::sum);
+            }
+        }
+
+    }
+
     public double calculateMarks() {
-        // Create a map from MarkValue _id to MarkValue points
-//        Map<String, Double> markValueMap = marksModel.getMarksMap().stream()
-//                .collect(Collectors.toMap(
-//                        entry -> entry.getValue().getId(),
-//                        entry -> entry.getValue().getPointsSum()
-//                ));
+        if (solutionModel == null) {
+            throw new RuntimeException("Solution model is not set");
+        }
 
         double totalSum = 0.0;
 
@@ -36,16 +58,24 @@ public class MarksCalculator {
         for (ModelElementCategory category : marksModel.getModelElementCategories()) {
             // Sum the points for each mark id in the category's marks list
             for (Mark markId : category.getMarks()) {
-//                if (markValueMap.containsKey(markId)) {
-//                    totalSum += markValueMap.get(markId);
-//                }
-                double oldPoints = commentMap.getOrDefault(markId.getComment(), 0.0);
+                PriorityQueue<Double> oldPoints = commentMap.computeIfAbsent(markId.getComment(), k -> new PriorityQueue<>());
+                double points = markId.getPoints();
 
-                if (oldPoints >= markId.getPoints()) continue;
+                if (oldPoints.size() < duplicatedElements.getOrDefault(markId.getComment(), 1)) {
+                    oldPoints.add(points);
+                    totalSum += points;
+                    continue;
+                }
 
-                commentMap.put(markId.getComment(), markId.getPoints());
+                double oldPointsSum = oldPoints.peek();
 
-                totalSum += markId.getPoints() - oldPoints;
+                if (oldPointsSum >= points)
+                    continue;
+
+                oldPoints.poll();
+                oldPoints.add(points);
+
+                totalSum += points - oldPointsSum;
             }
             for (MissedModelElement missedModelElement : category.getMissedModelElements()) {
                 Mark compensationMark = missedModelElement.getCompensationMark();
@@ -59,37 +89,5 @@ public class MarksCalculator {
 
         return totalSum;
     }
-
-
-    /*public double calculateMarks() {
-        // Create a map from MarkValue _id to MarkValue points
-        Map<String, Double> markValueMap = marksModel.getMarksMap().stream()
-                .collect(Collectors.toMap(
-                        entry -> entry.getValue().getId(),
-                        entry -> entry.getValue().getPointsSum()
-                ));
-
-        double totalSum = 0.0;
-
-        // Iterate through each ModelElementCategory
-        for (ModelElementCategory category : marksModel.getModelElementCategories()) {
-            // Sum the points for each mark id in the category's marks list
-            for (String markId : category.getMarks()) {
-                if (markValueMap.containsKey(markId)) {
-                    totalSum += markValueMap.get(markId);
-                }
-            }
-            for (MissedModelElement missedModelElement : category.getMissedModelElements()) {
-                CompensationMark compensationMark = missedModelElement.getCompensationMark();
-
-                if (compensationMark == null) continue;
-
-                totalSum += compensationMark.getPoints();
-            }
-        }
-
-        return totalSum;
-    }*/
-
 }
 
