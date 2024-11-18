@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 
 import static me.loopbreak.hermesanalyzer.services.ChatService.MESSAGE_INVALID_SYNTAX_SCORE;
 
@@ -57,14 +59,14 @@ public class MessageController {
 
     @GetMapping("/{messageId}/evaluate")
     @Async
-    public EvaluationResult evaluateMessage(@PathVariable Long messageId) {
+    public Future<EvaluationResult> evaluateMessage(@PathVariable Long messageId) {
         AIMessageEntity message = aiMessageRepository.findById(messageId).orElse(null);
 
         if (message == null)
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Message not found");
 
         String modelId = message.getPromptIteration().getChat().getIntentInstance().getIntentModel().getModelName();
-        Path solutionFile = null;
+        Path solutionFile;
         try {
             solutionFile = getSolutionPath(modelId);
         } catch (IOException e) {
@@ -91,13 +93,15 @@ public class MessageController {
              * If the message is not a valid plantUML code, return {@link MESSAGE_INVALID_SYNTAX_SCORE} as score
              */
             EvaluationResult maxScore = evaluator.evaluate(null, solutionFile);
-            return new EvaluationResult(MESSAGE_INVALID_SYNTAX_SCORE, maxScore.maxScore(), null, e.getErrors(), null);
+            return CompletableFuture.completedFuture(new EvaluationResult(MESSAGE_INVALID_SYNTAX_SCORE, maxScore.maxScore(), null, e.getErrors(), null));
         }
 
-        EvaluationResult score = evaluator.evaluate(parsedMessage.transformed(), solutionFile);
-        score = score.withDiagram(parsedMessage.plantUmlCode());
+        return CompletableFuture.supplyAsync(() -> {
+            EvaluationResult score = evaluator.evaluate(parsedMessage.transformed(), solutionFile);
+            score = score.withDiagram(parsedMessage.plantUmlCode());
 
-        return score;
+            return score;
+        });
     }
 
     private Path getSolutionPath(String modelId) throws IOException, SyntaxException {
