@@ -185,6 +185,7 @@ public class ChatService {
             AIMessage message = model.send(chatEntity.toDraft()).join();
             return message.getContent();
         } catch (Exception exception) {
+            exception.printStackTrace();
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to generate message", exception);
         }
     }
