@@ -6,6 +6,7 @@ import ca.mcgill.sel.commons.emf.util.ResourceManager;
 import ca.mcgill.sel.grading.classdiagram.ClassdiagramGrader;
 import ca.mcgill.sel.grading.classdiagram.ClassdiagramGraderAlgorithm;
 import ca.mcgill.sel.grading.marks.MarksModel;
+import ca.mcgill.sel.grading.marks.util.MarksModelUtil;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -94,8 +95,7 @@ public class EvaluatorConnectorImpl implements EvaluatorConnector {
         MarksModel solutionMarks = emptyMarksModelCache.getUnchecked(solution);
 
         if (attemptFile == null) {
-            double maxScore = MarksCalculator.of(solutionMarks).withSolution(solution).calculateMarks();
-            solutionMarks.setMaxPoints(maxScore);
+            solutionMarks.setMaxPoints(MarksModelUtil.calculateTotalPoints(solutionMarks));
             return solutionMarks;
         }
 
