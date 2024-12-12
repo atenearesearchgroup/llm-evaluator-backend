@@ -1,6 +1,7 @@
 package me.loopbreak.hermesanalyzer.controllers;
 
 import me.loopbreak.hermesanalyzer.entity.messages.AIMessageEntity;
+import me.loopbreak.hermesanalyzer.exceptions.InvalidModelOutputException;
 import me.loopbreak.hermesanalyzer.hooks.format.FormatConnector;
 import me.loopbreak.hermesanalyzer.hooks.format.FormatConnectorImpl;
 import me.loopbreak.hermesanalyzer.hooks.format.SyntaxException;
@@ -87,13 +88,17 @@ public class MessageController {
                 throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "There was an error while changing the diagram format");
             }
 
-            System.out.println("e.getErrors() = " + e.getErrors());
-
             /**
              * If the message is not a valid plantUML code, return {@link MESSAGE_INVALID_SYNTAX_SCORE} as score
              */
             EvaluationResult maxScore = evaluator.evaluate(null, solutionFile);
             return CompletableFuture.completedFuture(new EvaluationResult(MESSAGE_INVALID_SYNTAX_SCORE, maxScore.maxScore(), null, e.getErrors(), null));
+        } catch (InvalidModelOutputException exception) {
+            /**
+             * If the message is not a valid plantUML code, return {@link MESSAGE_INVALID_SYNTAX_SCORE} as score
+             */
+            EvaluationResult maxScore = evaluator.evaluate(null, solutionFile);
+            return CompletableFuture.completedFuture(new EvaluationResult(MESSAGE_INVALID_SYNTAX_SCORE, maxScore.maxScore(), null, null, null));
         }
 
         return CompletableFuture.supplyAsync(() -> {

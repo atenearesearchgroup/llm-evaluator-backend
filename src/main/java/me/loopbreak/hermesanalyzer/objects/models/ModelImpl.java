@@ -52,7 +52,8 @@ public class ModelImpl implements Model {
 
         List<org.springframework.ai.chat.messages.Message> springMessages = new ArrayList<>();
 
-        springMessages.add(systemMessage);
+        if (systemMessage.getContent() != null)
+            springMessages.add(systemMessage);
 
         messages.stream().map(Message::toSpringMessage).forEach(springMessages::add);
 
