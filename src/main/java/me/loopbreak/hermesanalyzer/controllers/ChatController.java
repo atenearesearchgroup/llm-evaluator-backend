@@ -41,6 +41,11 @@ public class ChatController {
         return chatEntityRepository.save(chatEntity);
     }
 
+    @DeleteMapping("/{chat}")
+    public void deleteChat(@PathVariable Long chat) {
+        chatEntityRepository.deleteById(chat);
+    }
+
     @PostMapping("/{chat}/message")
     public <T extends MessageEntity> T createMessage(@PathVariable Long chat,
                                                      @RequestBody CreateMessageRequest message) {
