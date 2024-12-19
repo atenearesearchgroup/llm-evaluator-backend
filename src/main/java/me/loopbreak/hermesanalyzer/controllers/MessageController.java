@@ -99,6 +99,12 @@ public class MessageController {
              */
             EvaluationResult maxScore = evaluator.evaluate(null, solutionFile);
             return CompletableFuture.completedFuture(new EvaluationResult(MESSAGE_INVALID_SYNTAX_SCORE, maxScore.maxScore(), null, null, null));
+        } catch (Exception e) {
+            /**
+             * If the message is not a valid plantUML code, return {@link MESSAGE_INVALID_SYNTAX_SCORE} as score
+             */
+            EvaluationResult maxScore = evaluator.evaluate(null, solutionFile);
+            return CompletableFuture.completedFuture(new EvaluationResult(MESSAGE_INVALID_SYNTAX_SCORE, maxScore.maxScore(), null, null, null));
         }
 
         return CompletableFuture.supplyAsync(() -> {
