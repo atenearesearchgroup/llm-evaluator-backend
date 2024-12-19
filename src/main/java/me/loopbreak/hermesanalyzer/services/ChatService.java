@@ -145,9 +145,10 @@ public class ChatService {
             setFinalized(chatEntity, true);
         }
 
+        // If you try to send a message to an iteration with more than 1 AIMessage with score not set
         if (promptIteration.getMessages().stream()
                     .filter(AIMessageEntity.class::isInstance)
-                    .filter(m -> ((AIMessageEntity) m).getScore() != MESSAGE_NOT_SET_SCORE)
+                    .filter(m -> ((AIMessageEntity) m).getScore() == MESSAGE_NOT_SET_SCORE)
                     .count() > 1) {
             setFinalized(chatEntity, true);
         }
@@ -166,7 +167,7 @@ public class ChatService {
         Model model = platform.getModel(modelSettings);
 
         if (model == null)
-            throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "Model not found");
+            throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "Model not found or not configured");
 
         PromptIterationEntity promptIteration = chatEntity.getLastIteration();
 
